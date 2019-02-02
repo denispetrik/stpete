@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import
 @EnableAutoConfiguration
 @Import(
     CoreConfiguration::class,
+    DatabaseConfiguration::class,
 //    ScheduleConfiguration::class,
     ClientConfiguration::class,
 

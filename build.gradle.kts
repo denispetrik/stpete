@@ -1,4 +1,10 @@
+import org.flywaydb.core.Flyway
+import org.flywaydb.core.internal.jdbc.DriverDataSource
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jooq.codegen.GenerationTool
+import org.jooq.meta.jaxb.*
+import org.jooq.meta.jaxb.Configuration
+import org.jooq.meta.jaxb.Target
 
 plugins {
     kotlin("jvm") version "1.3.20"
@@ -6,16 +12,36 @@ plugins {
     id("org.springframework.boot") version "2.1.1.RELEASE"
 }
 
+buildscript {
+    dependencies {
+        classpath("org.hsqldb:hsqldb:2.4.1")
+        classpath("org.flywaydb:flyway-core:5.2.4")
+        classpath("org.jooq:jooq-codegen:3.11.7")
+        classpath("org.jooq:jooq-meta:3.11.7")
+    }
+}
+
 apply(plugin = "io.spring.dependency-management")
 
 group = "den.ptrq"
 version = "0.0.1-SNAPSHOT"
 
+java {
+    sourceSets {
+        getByName("main").java {
+            srcDirs("build/generated")
+        }
+    }
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jooq")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.apache.httpcomponents:httpclient")
+    implementation("org.hsqldb:hsqldb:2.4.1")
+    implementation("org.flywaydb:flyway-core:5.2.4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
@@ -36,6 +62,7 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
+        dependsOn("jooqClasses")
     }
 
     named<KotlinCompile>("compileTestKotlin") {
@@ -43,9 +70,44 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
+        dependsOn("jooqClasses")
     }
 
     named<Test>("test") {
         useJUnitPlatform()
+    }
+}
+
+tasks.register("jooqClasses") {
+    doLast {
+        val dbName = "stpete"
+        val dbUser = "sa"
+        val dbPassword = ""
+        val schema = "p"
+        val jdbcUrl = "jdbc:hsqldb:mem:$dbName"
+        val driverClass = "org.hsqldb.jdbc.JDBCDriver"
+        val targetPackage = "den.ptrq.stpete.jooq"
+
+        val classLoader = Thread.currentThread().contextClassLoader
+        val properties = mapOf("sql.syntax_pgs" to "true").toProperties()
+        val dataSource = DriverDataSource(classLoader, driverClass, jdbcUrl, dbUser, dbPassword, properties)
+
+        Flyway.configure()
+            .dataSource(dataSource)
+            .schemas(schema)
+            .locations("filesystem:src/main/resources/db/migration")
+            .load()
+            .migrate()
+
+        val database = Database()
+            .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
+            .withExcludes("flyway_schema_history")
+            .withInputSchema(schema)
+
+        val target = Target().withPackageName(targetPackage).withDirectory("$buildDir/generated")
+        val generator = Generator().withDatabase(database).withTarget(target)
+        val jdbc = Jdbc().withUrl(jdbcUrl).withUser(dbUser).withPassword(dbPassword)
+        val configuration = Configuration().withJdbc(jdbc).withGenerator(generator)
+        GenerationTool.generate(configuration)
     }
 }
