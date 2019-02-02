@@ -1,0 +1,15 @@
+.DS_Store
+.gradle/
+
+build/
+target/
+out/
+temp/
+tmp/
+*.class
+
+.idea/
+*.iml
+*.ipr
+*.iws
+*.ids
