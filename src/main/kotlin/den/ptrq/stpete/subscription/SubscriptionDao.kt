@@ -29,8 +29,8 @@ class SubscriptionDao(private val context: DSLContext) {
             .execute()
     }
 
-    fun selectAllSubscriptions(): List<Subscription> {
-        log.info("selectAllSubscriptions()")
+    fun selectAll(): List<Subscription> {
+        log.info("selectAll()")
         return context
             .selectFrom(SUBSCRIPTION)
             .fetch(mapper)

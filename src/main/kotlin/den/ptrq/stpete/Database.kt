@@ -17,7 +17,6 @@ import javax.sql.DataSource
 
 @Configuration
 class DatabaseConfiguration {
-
     @Bean
     fun dataSource(): DataSource {
         val hikariConfig = HikariConfig()
@@ -37,6 +36,8 @@ class DatabaseConfiguration {
     }
 }
 
-fun Instant.toTimestamp() = Timestamp.from(this)
+fun Instant.asTimestamp() = Timestamp.from(this)
 
-fun LocalDateTime.toTimestamp() = this.toInstant(ZoneOffset.UTC).toTimestamp()
+fun LocalDateTime.asTimestamp() = this.toInstant(ZoneOffset.UTC).asTimestamp()
+
+fun Timestamp.asLocalDateTime() = this.toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()

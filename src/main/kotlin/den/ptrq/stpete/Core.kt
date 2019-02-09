@@ -1,6 +1,8 @@
 package den.ptrq.stpete
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
@@ -55,3 +57,8 @@ private fun <T : Any> ResponseEntity<T>.asResult(): Result<T, ResponseError> =
 enum class ResponseError {
     TECHNICAL_ERROR
 }
+
+fun ObjectMapper.serialize(value: Any): String = this.writeValueAsString(value)
+
+inline fun <reified T : Any> ObjectMapper.deserialize(serialized: String): T =
+    this.readValue(serialized, object : TypeReference<T>() {})

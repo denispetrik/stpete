@@ -21,7 +21,7 @@ class InteractionPoller(
     fun pollInteractions() {
         log.info("polling new bot interactions")
 
-        val latestUpdateId = interactionDao.selectLatestInteraction().map { it.updateId }.orElse(0)
+        val latestUpdateId = interactionDao.selectLatest().map { it.updateId }.orElse(0)
         log.info("latest updateId={}", latestUpdateId)
 
         val response = telegramClient.getUpdates(offset = latestUpdateId + 1, limit = 3)
@@ -42,16 +42,24 @@ class InteractionPoller(
         }
     }
 
-    private fun Update.toInteraction() = Interaction(
-        id = interactionDao.generateInteractionId(),
-        updateId = id,
-        userId = message.user.id,
-        userName = message.user.userName,
-        chatId = message.chat.id,
-        chatType = message.chat.type,
-        dateTime = LocalDateTime.ofEpochSecond(message.dateTime, 0, ZoneOffset.UTC),
-        text = message.text
-    )
+    private fun Update.toInteraction(): Interaction {
+        val keyWords = extractBotCommands().asSequence()
+            .map { KeyWord(type = KeyWord.Type.BOT_COMMAND, value = it) }
+            .toList()
+
+        return Interaction(
+            id = interactionDao.generateInteractionId(),
+            updateId = id,
+            userId = message.user.id,
+            userName = message.user.userName,
+            chatId = message.chat.id,
+            chatType = message.chat.type,
+            dateTime = LocalDateTime.ofEpochSecond(message.dateTime, 0, ZoneOffset.UTC),
+            text = message.text,
+            keyWords = keyWords,
+            processed = false
+        )
+    }
 
     companion object {
         private val log = LoggerFactory.getLogger(InteractionPoller::class.java)

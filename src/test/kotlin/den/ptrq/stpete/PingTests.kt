@@ -14,7 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 /**
  * @author petrique
  */
-
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [Application::class], webEnvironment = RANDOM_PORT)
 class PingTests {
@@ -23,7 +22,7 @@ class PingTests {
     lateinit var restTemplate: TestRestTemplate
 
     @Test
-    fun `Should return pong on ping request`() {
+    fun `should return pong on ping request`() {
         val response = restTemplate.getForEntity<String>("/ping")
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isEqualTo("pong")

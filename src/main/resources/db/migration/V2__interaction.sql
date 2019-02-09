@@ -9,5 +9,8 @@ create table interaction (
   chat_type varchar(10) not null,
   date_time timestamp not null,
   text varchar(100) not null,
+  key_words varchar(100),
   processed boolean not null
 );
+
+--create index idx_interaction_unprocessed on interaction (date_time) where processed = false;

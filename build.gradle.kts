@@ -93,23 +93,27 @@ tasks.register("generateJooqClasses") {
             classLoader, "org.hsqldb.jdbc.JDBCDriver", jdbcUrl, dbUser, dbPassword, properties
         )
 
-        Flyway.configure()
-            .dataSource(dataSource)
-            .schemas(schema)
-            .locations("filesystem:src/main/resources/db/migration")
-            .load()
-            .migrate()
+        try {
+            Flyway.configure()
+                .dataSource(dataSource)
+                .schemas(schema)
+                .locations("filesystem:src/main/resources/db/migration")
+                .load()
+                .migrate()
 
-        val database = Database()
-            .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
-            .withExcludes("flyway_schema_history")
-            .withInputSchema(schema)
+            val database = Database()
+                .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
+                .withExcludes("flyway_schema_history")
+                .withInputSchema(schema)
 
-        val target = Target().withPackageName(targetPackage).withDirectory("$buildDir/generated")
-        val generator = Generator().withDatabase(database).withTarget(target)
-        val jdbc = Jdbc().withUrl(jdbcUrl).withUser(dbUser).withPassword(dbPassword)
-        val configuration = Configuration().withJdbc(jdbc).withGenerator(generator)
-        GenerationTool.generate(configuration)
+            val target = Target().withPackageName(targetPackage).withDirectory("$buildDir/generated")
+            val generator = Generator().withDatabase(database).withTarget(target)
+            val jdbc = Jdbc().withUrl(jdbcUrl).withUser(dbUser).withPassword(dbPassword)
+            val configuration = Configuration().withJdbc(jdbc).withGenerator(generator)
+            GenerationTool.generate(configuration)
+        } catch (e: Exception) {
+            logger.error("exception has been raised", e)
+        }
 
         dataSource.connection.close()
     }
