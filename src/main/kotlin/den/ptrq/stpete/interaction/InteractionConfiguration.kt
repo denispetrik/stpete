@@ -1,8 +1,8 @@
 package den.ptrq.stpete.interaction
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import den.ptrq.stpete.client.telegram.TelegramClient
 import den.ptrq.stpete.subscription.SubscriptionDao
+import den.ptrq.stpete.telegram.TelegramClient
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

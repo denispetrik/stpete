@@ -1,8 +1,8 @@
 package den.ptrq.stpete.forecast
 
-import den.ptrq.stpete.client.telegram.TelegramClient
 import den.ptrq.stpete.subscription.Subscription
 import den.ptrq.stpete.subscription.SubscriptionDao
+import den.ptrq.stpete.telegram.TelegramClient
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant

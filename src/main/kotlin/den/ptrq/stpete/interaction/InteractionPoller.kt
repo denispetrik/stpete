@@ -1,7 +1,7 @@
 package den.ptrq.stpete.interaction
 
-import den.ptrq.stpete.client.telegram.TelegramClient
-import den.ptrq.stpete.client.telegram.Update
+import den.ptrq.stpete.telegram.TelegramClient
+import den.ptrq.stpete.telegram.Update
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate

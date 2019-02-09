@@ -1,4 +1,4 @@
-package den.ptrq.stpete.client.telegram
+package den.ptrq.stpete.telegram
 
 import den.ptrq.stpete.get
 import den.ptrq.stpete.post
@@ -7,7 +7,6 @@ import org.springframework.web.client.RestTemplate
 /**
  * @author petrique
  */
-
 class TelegramClient(private val restTemplate: RestTemplate) {
 
     private val token = "788663904:AAGToBbp5oXmB_mEFdt-rYohN0Wf6Xo3BHM"

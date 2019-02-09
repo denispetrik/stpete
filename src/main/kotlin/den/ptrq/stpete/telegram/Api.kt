@@ -1,4 +1,4 @@
-package den.ptrq.stpete.client.telegram
+package den.ptrq.stpete.telegram
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

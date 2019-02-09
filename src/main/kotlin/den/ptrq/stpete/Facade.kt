@@ -1,7 +1,7 @@
 package den.ptrq.stpete
 
-import den.ptrq.stpete.client.telegram.TelegramClient
 import den.ptrq.stpete.forecast.ForecastClient
+import den.ptrq.stpete.telegram.TelegramClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.GetMapping

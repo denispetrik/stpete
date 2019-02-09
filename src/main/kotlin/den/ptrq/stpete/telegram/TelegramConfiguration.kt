@@ -1,6 +1,5 @@
-package den.ptrq.stpete.client
+package den.ptrq.stpete.telegram
 
-import den.ptrq.stpete.client.telegram.TelegramClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
@@ -9,7 +8,8 @@ import org.springframework.web.client.RestTemplate
  * @author petrique
  */
 @Configuration
-class ClientConfiguration {
+class TelegramConfiguration {
+
     @Bean
     fun telegramClient(restTemplate: RestTemplate) = TelegramClient(restTemplate)
 }
