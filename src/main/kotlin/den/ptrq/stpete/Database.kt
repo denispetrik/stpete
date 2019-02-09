@@ -5,6 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.sql.Timestamp
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import javax.sql.DataSource
 
 /**
@@ -32,3 +36,7 @@ class DatabaseConfiguration {
         flyway.migrate()
     }
 }
+
+fun Instant.toTimestamp() = Timestamp.from(this)
+
+fun LocalDateTime.toTimestamp() = this.toInstant(ZoneOffset.UTC).toTimestamp()

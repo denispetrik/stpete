@@ -1,6 +1,5 @@
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.internal.jdbc.DriverDataSource
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
 import org.jooq.meta.jaxb.Configuration
@@ -78,19 +77,20 @@ tasks {
     }
 }
 
-tasks.register("jooqClasses") {
+tasks.register("generateJooqClasses") {
+    group = "jooq"
     doLast {
-        val dbName = "stpete"
         val dbUser = "sa"
         val dbPassword = ""
         val schema = "p"
-        val jdbcUrl = "jdbc:hsqldb:mem:$dbName"
-        val driverClass = "org.hsqldb.jdbc.JDBCDriver"
+        val jdbcUrl = "jdbc:hsqldb:mem:stpete"
         val targetPackage = "den.ptrq.stpete.jooq"
 
         val classLoader = Thread.currentThread().contextClassLoader
         val properties = mapOf("sql.syntax_pgs" to "true").toProperties()
-        val dataSource = DriverDataSource(classLoader, driverClass, jdbcUrl, dbUser, dbPassword, properties)
+        val dataSource = DriverDataSource(
+            classLoader, "org.hsqldb.jdbc.JDBCDriver", jdbcUrl, dbUser, dbPassword, properties
+        )
 
         Flyway.configure()
             .dataSource(dataSource)
@@ -109,5 +109,7 @@ tasks.register("jooqClasses") {
         val jdbc = Jdbc().withUrl(jdbcUrl).withUser(dbUser).withPassword(dbPassword)
         val configuration = Configuration().withJdbc(jdbc).withGenerator(generator)
         GenerationTool.generate(configuration)
+
+        dataSource.connection.close()
     }
 }

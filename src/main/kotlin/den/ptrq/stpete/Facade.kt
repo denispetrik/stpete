@@ -35,10 +35,10 @@ class FacadeController(
 
     @GetMapping("/bot/updates")
     fun updates(): String {
-        val response = telegramClient.getUpdates(offset = 0, limit = 2)
+        val response = telegramClient.getUpdates(offset = 0, limit = 3)
         return response.result.asSequence()
-            .mapNotNull { it.message }
-            .joinToString { "id=${it.id}, text=${it.text ?: ""}" }
+            .map { it.message }
+            .joinToString(separator = ";") { "id=${it.id}, text=${it.text}" }
     }
 
     @GetMapping("/bot/send")

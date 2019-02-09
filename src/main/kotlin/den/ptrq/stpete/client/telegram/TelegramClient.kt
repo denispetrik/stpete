@@ -19,7 +19,7 @@ class TelegramClient(private val restTemplate: RestTemplate) {
             .getValueOrElse { throw RuntimeException("getMe call failed with error ${getError()}") }
     }
 
-    fun getUpdates(offset: Int = 0, limit: Int = 1): Response<List<Update>> {
+    fun getUpdates(offset: Long, limit: Int): Response<List<Update>> {
         val request = GetUpdatesRequest(offset, limit, timeout = 0)
         return restTemplate
             .post<Response<List<Update>>>("$baseUrl/getUpdates", request)

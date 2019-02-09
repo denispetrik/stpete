@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 
 class GetUpdatesRequest(
-    @JsonProperty("offset") val offset: Int,
+    @JsonProperty("offset") val offset: Long,
     @JsonProperty("limit") val limit: Int,
     @JsonProperty("timeout") val timeout: Int
 )
@@ -24,24 +24,33 @@ class Response<T>(
 
 class Update(
     @JsonProperty("update_id") val id: Long,
-    @JsonProperty("message") val message: Message?
-)
+    @JsonProperty("message") val message: Message
+) {
+    fun extractBotCommands(): List<String> {
+        if (message.entities == null) {
+            return emptyList()
+        }
+        return message.entities.asSequence()
+            .filter { it.type == "bot_command" }
+            .map { message.text.substring(it.offset + 1, it.offset + it.length) }
+            .toList()
+    }
+}
 
 class Message(
     @JsonProperty("message_id") val id: Long,
-    @JsonProperty("from") val from: User?,
-    @JsonProperty("date") val date: Int,
+    @JsonProperty("from") val user: User,
     @JsonProperty("chat") val chat: Chat,
-    @JsonProperty("text") val text: String?,
+    @JsonProperty("date") val dateTime: Long,
+    @JsonProperty("text") val text: String,
     @JsonProperty("entities") val entities: List<MessageEntity>?
 )
 
 class User(
     @JsonProperty("id") val id: Long,
-    @JsonProperty("is_bot") val isBot: Boolean,
     @JsonProperty("first_name") val firstName: String,
     @JsonProperty("last_name") val lastName: String?,
-    @JsonProperty("username") val userName: String?
+    @JsonProperty("username") val userName: String
 )
 
 class Chat(

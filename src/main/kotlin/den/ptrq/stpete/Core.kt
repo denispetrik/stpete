@@ -1,5 +1,6 @@
 package den.ptrq.stpete
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -20,7 +21,9 @@ import org.springframework.web.client.RestTemplate
 class CoreConfiguration {
     @Bean
     fun coreObjectMapperCustomizer() = Jackson2ObjectMapperBuilderCustomizer { builder ->
-        builder.modulesToInstall(KotlinModule())
+        builder
+            .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+//            .modulesToInstall(KotlinModule())
     }
 
     @Bean

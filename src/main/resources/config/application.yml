@@ -3,5 +3,3 @@ server:
 
 spring:
   main.banner-mode: 'off'
-
-  jackson.default-property-inclusion: non_empty
