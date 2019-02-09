@@ -1,4 +1,4 @@
-package den.ptrq.stpete.client
+package den.ptrq.stpete.forecast
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import den.ptrq.stpete.get
@@ -7,7 +7,6 @@ import org.springframework.web.client.RestTemplate
 /**
  * @author petrique
  */
-
 class ForecastClient(private val restTemplate: RestTemplate) {
 
     private val token = "7f9e8297d7af64322891ad76a54494f9"

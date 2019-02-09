@@ -6,7 +6,6 @@ import den.ptrq.stpete.subscription.SubscriptionDao
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
  * @author petrique
  */
 @Configuration
-@EnableScheduling
 class InteractionConfiguration {
 
     @Bean

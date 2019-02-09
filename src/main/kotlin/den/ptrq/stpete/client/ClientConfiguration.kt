@@ -12,7 +12,4 @@ import org.springframework.web.client.RestTemplate
 class ClientConfiguration {
     @Bean
     fun telegramClient(restTemplate: RestTemplate) = TelegramClient(restTemplate)
-
-    @Bean
-    fun forecastClient(restTemplate: RestTemplate) = ForecastClient(restTemplate)
 }
