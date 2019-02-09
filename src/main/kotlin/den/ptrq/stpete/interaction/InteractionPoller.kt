@@ -11,14 +11,13 @@ import java.time.ZoneOffset
 /**
  * @author petrique
  */
-
 class InteractionPoller(
     private val telegramClient: TelegramClient,
     private val transactionTemplate: TransactionTemplate,
     private val interactionDao: InteractionDao
 ) {
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000, initialDelay = 10000)
     fun pollInteractions() {
         log.info("polling new bot interactions")
 

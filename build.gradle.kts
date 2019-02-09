@@ -1,13 +1,14 @@
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.internal.jdbc.DriverDataSource
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
 import org.jooq.meta.jaxb.Configuration
 import org.jooq.meta.jaxb.Target
 
 plugins {
-    kotlin("jvm") version "1.3.20"
-    kotlin("plugin.spring") version "1.3.20"
+    kotlin("jvm") version "1.3.21"
+    kotlin("plugin.spring") version "1.3.21"
     id("org.springframework.boot") version "2.1.1.RELEASE"
 }
 
@@ -25,10 +26,10 @@ apply(plugin = "io.spring.dependency-management")
 group = "den.ptrq"
 version = "0.0.1-SNAPSHOT"
 
-java {
+kotlin {
     sourceSets {
-        getByName("main").java {
-            srcDirs("build/generated")
+        main {
+            kotlin.srcDir("build/generated")
         }
     }
 }

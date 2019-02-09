@@ -12,7 +12,6 @@ import java.util.*
 /**
  * @author petrique
  */
-
 class InteractionDao(private val context: DSLContext) {
 
     fun generateInteractionId(): Long {
@@ -39,7 +38,7 @@ class InteractionDao(private val context: DSLContext) {
         log.info("selectAllInteractions()")
         return context
             .selectFrom(INTERACTION)
-            .fetch(RECORD_MAPPER)
+            .fetch(mapper)
     }
 
     fun selectLatestInteraction(): Optional<Interaction> {
@@ -48,13 +47,12 @@ class InteractionDao(private val context: DSLContext) {
             .selectFrom(INTERACTION)
             .orderBy(INTERACTION.UPDATE_ID.desc())
             .limit(1)
-            .fetchOptional(RECORD_MAPPER)
+            .fetchOptional(mapper)
     }
 
     companion object {
         private val log = LoggerFactory.getLogger(InteractionDao::class.java)
-
-        private val RECORD_MAPPER: RecordMapper<InteractionRecord, Interaction> = RecordMapper { record ->
+        private val mapper = RecordMapper<InteractionRecord, Interaction> { record ->
             Interaction(
                 id = record.id,
                 updateId = record.updateId,

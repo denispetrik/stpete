@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController
 /**
  * @author petrique
  */
-
 @Configuration
 @EnableScheduling
 class InteractionConfiguration {
@@ -26,6 +25,9 @@ class InteractionConfiguration {
         transactionTemplate: TransactionTemplate,
         interactionDao: InteractionDao
     ) = InteractionPoller(telegramClient, transactionTemplate, interactionDao)
+
+    @Bean
+    fun interactionProcessor(interactionDao: InteractionDao) = InteractionProcessor(interactionDao)
 
     @Bean
     fun interactionController(interactionDao: InteractionDao) = InteractionController(interactionDao)

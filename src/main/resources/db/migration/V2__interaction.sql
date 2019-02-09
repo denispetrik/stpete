@@ -8,5 +8,6 @@ create table interaction (
   chat_id bigint not null,
   chat_type varchar(10) not null,
   date_time timestamp not null,
-  text varchar(100) not null
+  text varchar(100) not null,
+  processed boolean not null
 );
