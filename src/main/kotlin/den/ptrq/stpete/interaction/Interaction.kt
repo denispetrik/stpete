@@ -33,4 +33,8 @@ class KeyWord(
     enum class Type(@JsonValue val code: String) {
         BOT_COMMAND("botCommand")
     }
+
+    override fun toString(): String {
+        return "KeyWord(type=$type, value='$value')"
+    }
 }

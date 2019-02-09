@@ -43,6 +43,15 @@ class InteractionDao(
             .execute()
     }
 
+    fun markAsProcessed(interaction: Interaction) {
+        log.info("markAsProcessed({})", interaction)
+        context
+            .update(INTERACTION)
+            .set(INTERACTION.PROCESSED, true)
+            .where(INTERACTION.ID.equal(interaction.id))
+            .execute()
+    }
+
     fun selectById(id: Long): Interaction {
         log.info("selectById(id={})", id)
         return context

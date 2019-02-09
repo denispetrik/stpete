@@ -2,6 +2,7 @@ package den.ptrq.stpete.interaction
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import den.ptrq.stpete.client.telegram.TelegramClient
+import den.ptrq.stpete.subscription.SubscriptionDao
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,7 +29,11 @@ class InteractionConfiguration {
     ) = InteractionPoller(telegramClient, transactionTemplate, interactionDao)
 
     @Bean
-    fun interactionProcessor(interactionDao: InteractionDao) = InteractionProcessor(interactionDao)
+    fun interactionProcessor(
+        transactionTemplate: TransactionTemplate,
+        interactionDao: InteractionDao,
+        subscriptionDao: SubscriptionDao
+    ) = InteractionProcessor(transactionTemplate, interactionDao, subscriptionDao)
 
     @Bean
     fun interactionController(interactionDao: InteractionDao) = InteractionController(interactionDao)
@@ -36,11 +41,10 @@ class InteractionConfiguration {
 
 @RestController
 class InteractionController(private val interactionDao: InteractionDao) {
-
     @GetMapping("/interactions")
     fun getAll(): String {
         return interactionDao.selectAll().asSequence()
-            .map { it.text }
-            .joinToString(separator = "; ")
+            .map { it.toString() }
+            .joinToString(separator = "\n")
     }
 }
