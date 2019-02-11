@@ -78,14 +78,29 @@ tasks {
     }
 }
 
-tasks.register("generateJooqClasses") {
-    group = "jooq"
-    doLast {
+tasks.register<GenerateJooqClasses>("generateJooqClasses") {
+    migrationLocation = "filesystem:src/main/resources/db/migration"
+    targetLocation = "$buildDir/generated"
+    targetPackage = "den.ptrq.stpete.jooq"
+}
+
+open class GenerateJooqClasses : DefaultTask() {
+
+    init {
+        group = "jooq"
+        description = "generates jooq classes based on migrated in-memory database"
+    }
+
+    lateinit var migrationLocation: String
+    lateinit var targetLocation: String
+    lateinit var targetPackage: String
+
+    @TaskAction
+    fun action() {
         val dbUser = "sa"
         val dbPassword = ""
         val schema = "p"
-        val jdbcUrl = "jdbc:hsqldb:mem:stpete"
-        val targetPackage = "den.ptrq.stpete.jooq"
+        val jdbcUrl = "jdbc:hsqldb:mem:db"
 
         val classLoader = Thread.currentThread().contextClassLoader
         val properties = mapOf("sql.syntax_pgs" to "true").toProperties()
@@ -97,7 +112,7 @@ tasks.register("generateJooqClasses") {
             Flyway.configure()
                 .dataSource(dataSource)
                 .schemas(schema)
-                .locations("filesystem:src/main/resources/db/migration")
+                .locations(migrationLocation)
                 .load()
                 .migrate()
 
@@ -105,16 +120,13 @@ tasks.register("generateJooqClasses") {
                 .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
                 .withExcludes("flyway_schema_history")
                 .withInputSchema(schema)
-
-            val target = Target().withPackageName(targetPackage).withDirectory("$buildDir/generated")
+            val target = Target().withPackageName(targetPackage).withDirectory(targetLocation)
             val generator = Generator().withDatabase(database).withTarget(target)
             val jdbc = Jdbc().withUrl(jdbcUrl).withUser(dbUser).withPassword(dbPassword)
-            val configuration = Configuration().withJdbc(jdbc).withGenerator(generator)
+            val configuration = Configuration().withGenerator(generator).withJdbc(jdbc)
             GenerationTool.generate(configuration)
-        } catch (e: Exception) {
-            logger.error("exception has been raised", e)
+        } finally {
+            dataSource.connection.close()
         }
-
-        dataSource.connection.close()
     }
 }
