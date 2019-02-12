@@ -62,7 +62,7 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
-        dependsOn("jooqClasses")
+        dependsOn("generateJooqClasses")
     }
 
     named<KotlinCompile>("compileTestKotlin") {
@@ -70,7 +70,7 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
-        dependsOn("jooqClasses")
+        dependsOn("generateJooqClasses")
     }
 
     named<Test>("test") {
