@@ -21,7 +21,7 @@ class DatabaseConfiguration {
     fun dataSource(): DataSource {
         val hikariConfig = HikariConfig()
         hikariConfig.driverClassName = "org.hsqldb.jdbc.JDBCDriver"
-        hikariConfig.jdbcUrl = "jdbc:hsqldb:mem:stpete"
+        hikariConfig.jdbcUrl = "jdbc:hsqldb:mem:db"
         hikariConfig.username = "sa"
         hikariConfig.password = ""
         hikariConfig.isAutoCommit = false
@@ -31,7 +31,7 @@ class DatabaseConfiguration {
 
     @Bean
     fun flywayMigrationStrategy() = FlywayMigrationStrategy { flyway ->
-        flyway.setSchemas("p")
+        flyway.setSchemas("public")
         flyway.migrate()
     }
 }
