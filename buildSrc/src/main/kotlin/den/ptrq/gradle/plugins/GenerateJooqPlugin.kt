@@ -4,6 +4,8 @@ import org.flywaydb.core.Flyway
 import org.flywaydb.core.internal.jdbc.DriverDataSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
@@ -28,6 +30,8 @@ class GenerateJooqPlugin : Plugin<Project> {
     private val jdbcUrl = "jdbc:hsqldb:mem:db"
 
     override fun apply(project: Project) {
+        project.pluginManager.apply(JavaBasePlugin::class.java)
+
         val ext = project.extensions.create<GenerateJooqExtension>("generateJooq")
 
         val generateJooqTask = project.task("generateJooq") {
@@ -48,6 +52,11 @@ class GenerateJooqPlugin : Plugin<Project> {
         project.tasks
             .filter { it.name == "compileKotlin" || it.name == "compileTestKotlin" }
             .forEach { it.dependsOn += generateJooqTask }
+
+        project.afterEvaluate {
+            val sourceSetContainer = project.convention.getByType(SourceSetContainer::class.java)
+            sourceSetContainer.getByName("main").java.srcDir(ext.targetLocation!!)
+        }
     }
 
     private fun startInMemoryDatabase(): DataSource {
