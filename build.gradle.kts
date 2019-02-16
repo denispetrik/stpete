@@ -32,7 +32,6 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
-        dependsOn("generateJooq")
     }
 
     named<KotlinCompile>("compileTestKotlin") {
@@ -40,7 +39,6 @@ tasks {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
         }
-        dependsOn("generateJooq")
     }
 
     named<Test>("test") {

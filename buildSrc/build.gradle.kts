@@ -12,6 +12,10 @@ gradlePlugin {
     }
 }
 
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}
+
 dependencies {
     implementation("org.hsqldb:hsqldb:2.4.1")
     implementation("org.flywaydb:flyway-core:5.2.4")

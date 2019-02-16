@@ -30,7 +30,7 @@ class GenerateJooqPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val ext = project.extensions.create<GenerateJooqExtension>("generateJooq")
 
-        project.task("generateJooq") {
+        val generateJooqTask = project.task("generateJooq") {
             group = "jooq"
             description = "generates jooq classes based on migrated in-memory database"
 
@@ -44,6 +44,10 @@ class GenerateJooqPlugin : Plugin<Project> {
                 }
             }
         }
+
+        project.tasks
+            .filter { it.name == "compileKotlin" || it.name == "compileTestKotlin" }
+            .forEach { it.dependsOn += generateJooqTask }
     }
 
     private fun startInMemoryDatabase(): DataSource {
