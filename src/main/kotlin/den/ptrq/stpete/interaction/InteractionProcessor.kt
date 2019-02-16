@@ -18,7 +18,7 @@ class InteractionProcessor(
     @Scheduled(fixedRate = 10000, initialDelay = 10000)
     fun processInteractions() {
         log.info("processing interactions")
-        interactionDao.selectUnprocessed(3).forEach { process(it) }
+        interactionDao.selectUnprocessed(limit = 3).forEach { process(it) }
     }
 
     private fun process(interaction: Interaction) {

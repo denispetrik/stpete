@@ -7,3 +7,6 @@ create table subscription (
   chat_id bigint not null,
   chat_type varchar(10) not null
 );
+
+insert into subscription(id, user_id, user_name, chat_id, chat_type)
+  values(1, 165925974, 'petrique', 165925974, 'private');
