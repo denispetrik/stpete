@@ -1,6 +1,8 @@
 package den.ptrq.stpete.interaction
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import den.ptrq.stpete.forecast.ForecastDao
+import den.ptrq.stpete.subscription.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import den.ptrq.stpete.telegram.TelegramClient
 import org.jooq.DSLContext
@@ -28,10 +30,12 @@ class InteractionConfiguration {
 
     @Bean
     fun interactionProcessor(
+        notificationSender: NotificationSender,
         transactionTemplate: TransactionTemplate,
         interactionDao: InteractionDao,
-        subscriptionDao: SubscriptionDao
-    ) = InteractionProcessor(transactionTemplate, interactionDao, subscriptionDao)
+        subscriptionDao: SubscriptionDao,
+        forecastDao: ForecastDao
+    ) = InteractionProcessor(notificationSender, transactionTemplate, interactionDao, subscriptionDao, forecastDao)
 
     @Bean
     fun interactionController(interactionDao: InteractionDao) = InteractionController(interactionDao)

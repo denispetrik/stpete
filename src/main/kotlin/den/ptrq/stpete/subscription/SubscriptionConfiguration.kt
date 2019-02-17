@@ -1,5 +1,6 @@
 package den.ptrq.stpete.subscription
 
+import den.ptrq.stpete.telegram.TelegramClient
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,6 +15,9 @@ class SubscriptionConfiguration {
 
     @Bean
     fun subscriptionDao(context: DSLContext) = SubscriptionDao(context)
+
+    @Bean
+    fun notificationSender(telegramClient: TelegramClient) = NotificationSender(telegramClient)
 
     @Bean
     fun subscriptionController(subscriptionDao: SubscriptionDao) = SubscriptionController(subscriptionDao)

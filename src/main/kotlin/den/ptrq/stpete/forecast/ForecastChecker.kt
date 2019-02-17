@@ -1,18 +1,17 @@
 package den.ptrq.stpete.forecast
 
+import den.ptrq.stpete.subscription.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
-import den.ptrq.stpete.telegram.TelegramClient
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate
-import java.time.Instant
 
 /**
  * @author petrique
  */
 class ForecastChecker(
     private val forecastClient: ForecastClient,
-    private val telegramClient: TelegramClient,
+    private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
     private val forecastDao: ForecastDao,
     private val subscriptionDao: SubscriptionDao
@@ -27,27 +26,27 @@ class ForecastChecker(
         val diff = formDiff(forecastResponse.forecastItems)
 
         if (diff.isNotEmpty()) {
-            transactionTemplate.execute {
-                diff.forEach {
-                    if (it.isNew()) {
-                        forecastDao.insert(
-                            Forecast(forecastDao.generateForecastId(), it.epochTime, it.clouds)
-                        )
-                    } else {
-                        forecastDao.updateClouds(Forecast(it.id!!, it.epochTime, it.clouds))
-                    }
-                }
-            }
+            log.info("there will be some sun")
+            val forecastList = saveForecast(diff)
 
-            val message = diff.asSequence()
-                .map { Instant.ofEpochSecond(it.epochTime) }
-                .joinToString(separator = "; ", prefix = "sunny time=") { it.toString() }
-
-            log.info("there will be a sunny day")
             subscriptionDao.selectAll().forEach {
-                telegramClient.sendMessage(chatId = it.chatId, text = message)
+                notificationSender.sendNotification(it, forecastList)
             }
         }
+    }
+
+    private fun saveForecast(diff: List<Diff>): List<Forecast> {
+        return transactionTemplate.execute {
+            diff.map {
+                if (it.isNew()) {
+                    Forecast(forecastDao.generateForecastId(), it.epochTime, it.clouds)
+                        .apply { forecastDao.insert(this) }
+                } else {
+                    Forecast(it.id!!, it.epochTime, it.clouds)
+                        .apply { forecastDao.updateClouds(this) }
+                }
+            }
+        } ?: throw RuntimeException()
     }
 
     private fun formDiff(newForecastItems: List<ForecastItem>): List<Diff> {

@@ -1,7 +1,7 @@
 package den.ptrq.stpete.forecast
 
+import den.ptrq.stpete.subscription.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
-import den.ptrq.stpete.telegram.TelegramClient
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,9 +23,9 @@ class ForecastConfiguration {
     @Bean
     fun forecastChecker(
         forecastClient: ForecastClient,
-        telegramClient: TelegramClient,
+        notificationSender: NotificationSender,
         transactionTemplate: TransactionTemplate,
         forecastDao: ForecastDao,
         subscriptionDao: SubscriptionDao
-    ) = ForecastChecker(forecastClient, telegramClient, transactionTemplate, forecastDao, subscriptionDao)
+    ) = ForecastChecker(forecastClient, notificationSender, transactionTemplate, forecastDao, subscriptionDao)
 }

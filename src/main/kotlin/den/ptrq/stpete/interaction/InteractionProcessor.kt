@@ -1,5 +1,7 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.forecast.ForecastDao
+import den.ptrq.stpete.subscription.NotificationSender
 import den.ptrq.stpete.subscription.Subscription
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
@@ -10,9 +12,11 @@ import org.springframework.transaction.support.TransactionTemplate
  * @author petrique
  */
 class InteractionProcessor(
+    private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
     private val interactionDao: InteractionDao,
-    private val subscriptionDao: SubscriptionDao
+    private val subscriptionDao: SubscriptionDao,
+    private val forecastDao: ForecastDao
 ) {
 
     @Scheduled(fixedRate = 10000, initialDelay = 10000)
@@ -28,11 +32,20 @@ class InteractionProcessor(
             .filter { it.type == KeyWord.Type.BOT_COMMAND }
             .any { it.value == "start" }
 
+        var subscription: Subscription? = null
         transactionTemplate.execute {
             interactionDao.markAsProcessed(interaction)
             if (isStartCommandPresent) {
-                subscriptionDao.insert(createSubscription(interaction))
+                subscription = createSubscription(interaction)
+                subscriptionDao.insert(subscription!!)
             }
+        }
+
+        if (subscription != null) {
+            val forecastList = forecastDao.getActual().asSequence()
+                .filter { it.clouds <= 40 }
+                .toList()
+            notificationSender.sendNotification(subscription!!, forecastList)
         }
     }
 
