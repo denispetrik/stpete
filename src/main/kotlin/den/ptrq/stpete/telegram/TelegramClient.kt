@@ -7,9 +7,10 @@ import org.springframework.web.client.RestTemplate
 /**
  * @author petrique
  */
-class TelegramClient(private val restTemplate: RestTemplate) {
-
-    private val token = "788663904:AAGT4qBz8LFQ1SfytalE5Z5d9t3C4BcndsM"
+class TelegramClient(
+    private val restTemplate: RestTemplate,
+    token: String
+) {
     private val baseUrl = "https://api.telegram.org/bot$token"
 
     fun getMe(): Response<User> {

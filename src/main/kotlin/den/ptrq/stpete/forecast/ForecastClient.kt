@@ -7,9 +7,10 @@ import org.springframework.web.client.RestTemplate
 /**
  * @author petrique
  */
-class ForecastClient(private val restTemplate: RestTemplate) {
-
-    private val token = "7f9e8297d7af64322891ad76a54494f9"
+class ForecastClient(
+    private val restTemplate: RestTemplate,
+    token: String
+) {
     private val cityId = 498817
     private val url = "https://api.openweathermap.org/data/2.5/forecast?APPID=$token&id=$cityId&units=metric"
 
