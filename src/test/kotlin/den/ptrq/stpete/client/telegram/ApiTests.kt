@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test
 class ApiTests {
     @Test
     fun `should parse commands`() {
-        val user =
-            User(id = 1, firstName = "firstName", lastName = "lastName", userName = "userName")
+        val user = User(id = 1, firstName = "firstName", lastName = "lastName", userName = "userName")
         val chat = Chat(id = 1, type = "private", title = null, userName = null)
         val text = "foo /start bar /stop"
         val entities = listOf(

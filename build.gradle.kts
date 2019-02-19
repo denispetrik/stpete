@@ -1,5 +1,6 @@
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.internal.jdbc.DriverDataSource
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
@@ -31,18 +32,24 @@ sourceSets {
             srcDir("$buildDir/generated")
         }
     }
+
+    create("intTest") {
+        withConvention(KotlinSourceSet::class) {
+            kotlin.srcDir("/src/intTest/kotlin")
+            resources.srcDir("/src/intTest/resources")
+        }
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
+    }
+}
+
+configurations {
+    getByName("intTestCompileClasspath").extendsFrom(getByName("testCompileClasspath"))
+    getByName("intTestRuntimeClasspath").extendsFrom(getByName("testRuntimeClasspath"))
 }
 
 tasks {
-    named<KotlinCompile>("compileKotlin") {
-        kotlinOptions {
-            freeCompilerArgs += "-Xjsr305=strict"
-            jvmTarget = "1.8"
-        }
-        dependsOn("generateJooq")
-    }
-
-    named<KotlinCompile>("compileTestKotlin") {
+    withType(KotlinCompile::class) {
         kotlinOptions {
             freeCompilerArgs += "-Xjsr305=strict"
             jvmTarget = "1.8"
@@ -52,6 +59,17 @@ tasks {
 
     named<Test>("test") {
         useJUnitPlatform()
+    }
+
+    create<Test>("intTest") {
+        group = "verification"
+        description = "Runs all integration tests"
+
+        useJUnitPlatform()
+        testClassesDirs = sourceSets["intTest"].output.classesDirs
+        classpath = sourceSets["intTest"].runtimeClasspath
+
+        getByName("check").dependsOn(this)
     }
 }
 
@@ -79,7 +97,7 @@ repositories {
 
 tasks.create("generateJooq") {
     group = "jooq"
-    description = "generates jooq classes based on migrated in-memory database"
+    description = "Generates jooq classes based on migrated in-memory database"
 
     doLast {
         val dbUser = "sa"

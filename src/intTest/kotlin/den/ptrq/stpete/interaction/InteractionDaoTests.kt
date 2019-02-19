@@ -1,22 +1,16 @@
 package den.ptrq.stpete.interaction
 
-import den.ptrq.stpete.Application
+import den.ptrq.stpete.test.IntTests
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDateTime
 
 /**
  * @author petrique
  */
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [Application::class], webEnvironment = RANDOM_PORT)
-class InteractionDaoTests {
+class InteractionDaoTests : IntTests() {
 
     @Autowired
     lateinit var transactionTemplate: TransactionTemplate
