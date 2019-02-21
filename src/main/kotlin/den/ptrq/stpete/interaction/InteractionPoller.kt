@@ -1,5 +1,6 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.common.ChatType
 import den.ptrq.stpete.telegram.TelegramClient
 import den.ptrq.stpete.telegram.Update
 import org.slf4j.LoggerFactory
@@ -53,7 +54,7 @@ class InteractionPoller(
             userId = message.user.id,
             userName = message.user.userName,
             chatId = message.chat.id,
-            chatType = message.chat.type,
+            chatType = ChatType.byCode(message.chat.type),
             dateTime = LocalDateTime.ofEpochSecond(message.dateTime, 0, ZoneOffset.UTC),
             text = message.text,
             keyWords = keyWords,

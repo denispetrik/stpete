@@ -1,5 +1,6 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.common.ChatType.PRIVATE
 import den.ptrq.stpete.test.IntTests
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,10 +23,10 @@ class InteractionDaoTests : IntTests() {
         val interaction = Interaction(
             id = interactionDao.generateInteractionId(),
             updateId = 1,
-            userId = 1,
+            userId = 2,
             userName = "userName",
-            chatId = 1,
-            chatType = "private",
+            chatId = 3,
+            chatType = PRIVATE,
             dateTime = LocalDateTime.now(),
             text = "/start",
             keyWords = listOf(KeyWord(type = KeyWord.Type.BOT_COMMAND, value = "start")),

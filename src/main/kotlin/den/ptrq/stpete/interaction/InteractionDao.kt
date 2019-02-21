@@ -3,6 +3,7 @@ package den.ptrq.stpete.interaction
 import com.fasterxml.jackson.databind.ObjectMapper
 import den.ptrq.stpete.asLocalDateTime
 import den.ptrq.stpete.asTimestamp
+import den.ptrq.stpete.common.ChatType
 import den.ptrq.stpete.deserialize
 import den.ptrq.stpete.jooq.Sequences.SEQ_INTERACTION_ID
 import den.ptrq.stpete.jooq.Tables.INTERACTION
@@ -35,7 +36,7 @@ class InteractionDao(
             .set(INTERACTION.USER_ID, interaction.userId)
             .set(INTERACTION.USER_NAME, interaction.userName)
             .set(INTERACTION.CHAT_ID, interaction.chatId)
-            .set(INTERACTION.CHAT_TYPE, interaction.chatType)
+            .set(INTERACTION.CHAT_TYPE, interaction.chatType.code)
             .set(INTERACTION.DATE_TIME, interaction.dateTime.asTimestamp())
             .set(INTERACTION.TEXT, interaction.text)
             .set(INTERACTION.KEY_WORDS, serializedKeyWords)
@@ -94,7 +95,7 @@ class InteractionDao(
             userId = record.userId,
             userName = record.userName,
             chatId = record.chatId,
-            chatType = record.chatType,
+            chatType = ChatType.byCode(record.chatType),
             dateTime = record.dateTime.asLocalDateTime(),
             text = record.text,
             keyWords = keyWords,

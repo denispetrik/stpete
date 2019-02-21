@@ -2,6 +2,7 @@ package den.ptrq.stpete.interaction
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue
+import den.ptrq.stpete.common.ChatType
 import java.time.LocalDateTime
 
 /**
@@ -13,7 +14,7 @@ class Interaction(
     val userId: Long,
     val userName: String,
     val chatId: Long,
-    val chatType: String,
+    val chatType: ChatType,
     val dateTime: LocalDateTime,
     val text: String,
     val keyWords: List<KeyWord>,
@@ -21,7 +22,7 @@ class Interaction(
 ) {
     override fun toString(): String {
         return "Interaction(id=$id, updateId=$updateId, userId=$userId, userName='$userName', " +
-                "chatId=$chatId, chatType='$chatType', dateTime=$dateTime, text='$text', " +
+                "chatId=$chatId, chatType=$chatType, dateTime=$dateTime, text='$text', " +
                 "keyWords=$keyWords, processed=$processed)"
     }
 }

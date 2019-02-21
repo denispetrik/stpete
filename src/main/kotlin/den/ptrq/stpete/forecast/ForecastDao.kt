@@ -37,6 +37,14 @@ class ForecastDao(private val context: DSLContext) {
             .execute()
     }
 
+    fun selectById(id: Long): Forecast {
+        log.info("selectById(id={})", id)
+        return context
+            .selectFrom(FORECAST)
+            .where(FORECAST.ID.equal(id))
+            .fetchOne(mapper)
+    }
+
     fun getActual(): List<Forecast> {
         log.info("getActual()")
         return context

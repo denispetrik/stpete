@@ -55,7 +55,7 @@ class User(
 
 class Chat(
     @JsonProperty("id") val id: Long,
-    @JsonProperty("type") val type: String, //todo enum: “private”, “group”, “supergroup” or “channel”
+    @JsonProperty("type") val type: String,
     @JsonProperty("title") val title: String?,
     @JsonProperty("username") val userName: String?
 )
