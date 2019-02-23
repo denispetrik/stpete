@@ -1,6 +1,6 @@
 package den.ptrq.stpete.forecast
 
-import den.ptrq.stpete.subscription.NotificationSender
+import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.jooq.DSLContext
 import org.springframework.beans.factory.annotation.Value

@@ -1,10 +1,13 @@
 package den.ptrq.stpete.forecast
 
-import den.ptrq.stpete.subscription.NotificationSender
+import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 /**
  * @author petrique
@@ -27,26 +30,25 @@ class ForecastChecker(
 
         if (diff.isNotEmpty()) {
             log.info("there will be some sun")
-            val forecastList = saveForecast(diff)
 
-            subscriptionDao.selectAll().forEach {
-                notificationSender.sendNotification(it, forecastList)
-            }
-        }
-    }
+            transactionTemplate.execute {
+                val forecastList = diff.map {
+                    if (it.isNew()) {
+                        Forecast(forecastDao.generateForecastId(), it.epochTime, it.clouds)
+                            .apply { forecastDao.insert(this) }
+                    } else {
+                        Forecast(it.id!!, it.epochTime, it.clouds)
+                            .apply { forecastDao.updateClouds(this) }
+                    }
+                }
 
-    private fun saveForecast(diff: List<Diff>): List<Forecast> {
-        return transactionTemplate.execute {
-            diff.map {
-                if (it.isNew()) {
-                    Forecast(forecastDao.generateForecastId(), it.epochTime, it.clouds)
-                        .apply { forecastDao.insert(this) }
-                } else {
-                    Forecast(it.id!!, it.epochTime, it.clouds)
-                        .apply { forecastDao.updateClouds(this) }
+                val message = formMessage(forecastList)
+
+                subscriptionDao.selectAll().forEach {
+                    notificationSender.sendAsynchronously(it.chatId, message)
                 }
             }
-        } ?: throw RuntimeException()
+        }
     }
 
     private fun formDiff(newForecastItems: List<ForecastItem>): List<Diff> {
@@ -68,6 +70,17 @@ class ForecastChecker(
         }
 
         return diff
+    }
+
+    private fun formMessage(forecastList: List<Forecast>): String {
+        return forecastList.asSequence()
+            .map { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it.epochTime), ZoneId.of("+3")) }
+            .groupBy { it.dayOfMonth }
+            .map { (day, dates) ->
+                val hours = dates.joinToString(separator = "; ") { it.hour.toString() }
+                "day = $day, hours: $hours"
+            }
+            .joinToString(separator = "\n")
     }
 
     private fun ForecastItem.differsFrom(forecast: Forecast) = this.isSunny() != forecast.isSunny()

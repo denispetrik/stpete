@@ -1,6 +1,9 @@
-* Long polling to Telegram bot api (XL)
-* Notifications as separate functionality (M)
-* Configurable 'sunny day' threshold (S)
-* Move to Heroku PostgresSQL (L)
-* Optimize thread-pools startup delays (S)
-* Extract diff calculator from ForecastChecker (M)
+- Long polling to Telegram bot api (XL)
+- Configurable 'sunny day' threshold (S)
+- Move to Heroku PostgresSQL (L)
+- Optimize thread-pools startup delays (S)
+- Extract diff calculator from ForecastChecker (M)
+- Stop in-memory HSQLDB that is started in generateJooq gradle task
+- User-friendly forecast message (S)
+
++ Notifications as separate functionality (M)

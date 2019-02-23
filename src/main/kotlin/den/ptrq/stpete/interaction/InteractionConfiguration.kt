@@ -2,7 +2,7 @@ package den.ptrq.stpete.interaction
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import den.ptrq.stpete.forecast.ForecastDao
-import den.ptrq.stpete.subscription.NotificationSender
+import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import den.ptrq.stpete.telegram.TelegramClient
 import org.jooq.DSLContext

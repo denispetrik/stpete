@@ -2,6 +2,7 @@ package den.ptrq.stpete
 
 import den.ptrq.stpete.forecast.ForecastConfiguration
 import den.ptrq.stpete.interaction.InteractionConfiguration
+import den.ptrq.stpete.notification.NotificationConfiguration
 import den.ptrq.stpete.subscription.SubscriptionConfiguration
 import den.ptrq.stpete.telegram.TelegramConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -22,7 +23,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
     TelegramConfiguration::class,
     InteractionConfiguration::class,
     SubscriptionConfiguration::class,
-    ForecastConfiguration::class
+    ForecastConfiguration::class,
+    NotificationConfiguration::class
 )
 class Application
 

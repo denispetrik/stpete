@@ -1,6 +1,6 @@
 create sequence seq_forecast_id;
 
-create table forecast(
+create table forecast (
   id bigint primary key,
   epoch_time bigint not null,
   clouds integer not null

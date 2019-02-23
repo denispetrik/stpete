@@ -1,12 +1,16 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.forecast.Forecast
 import den.ptrq.stpete.forecast.ForecastDao
-import den.ptrq.stpete.subscription.NotificationSender
+import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.Subscription
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 /**
  * @author petrique
@@ -45,8 +49,20 @@ class InteractionProcessor(
             val forecastList = forecastDao.getActual().asSequence()
                 .filter { it.clouds <= 40 }
                 .toList()
-            notificationSender.sendNotification(subscription!!, forecastList)
+            val message = formMessage(forecastList)
+            notificationSender.sendAsynchronously(subscription!!.chatId, message)
         }
+    }
+
+    private fun formMessage(forecastList: List<Forecast>): String {
+        return forecastList.asSequence()
+            .map { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it.epochTime), ZoneId.of("+3")) }
+            .groupBy { it.dayOfMonth }
+            .map { (day, dates) ->
+                val hours = dates.joinToString(separator = "; ") { it.hour.toString() }
+                "day = $day, hours: $hours"
+            }
+            .joinToString(separator = "\n")
     }
 
     private fun createSubscription(interaction: Interaction) = Subscription(

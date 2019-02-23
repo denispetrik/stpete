@@ -116,39 +116,35 @@ tasks.create("generateJooq") {
             classLoader, "org.hsqldb.jdbc.JDBCDriver", jdbcUrl, dbUser, dbPassword, properties
         )
 
-        try {
-            Flyway.configure()
-                .dataSource(dataSource)
-                .schemas(schema)
-                .locations(migrationLocation)
-                .load()
-                .migrate()
+        Flyway.configure()
+            .dataSource(dataSource)
+            .schemas(schema)
+            .locations(migrationLocation)
+            .load()
+            .migrate()
 
-            val database = Database()
-                .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
-                .withExcludes("flyway_schema_history")
-                .withInputSchema(schema)
+        val database = Database()
+            .withName("org.jooq.meta.hsqldb.HSQLDBDatabase")
+            .withExcludes("flyway_schema_history")
+            .withInputSchema(schema)
 
-            val target = Target()
-                .withPackageName(targetPackage)
-                .withDirectory(targetLocation)
+        val target = Target()
+            .withPackageName(targetPackage)
+            .withDirectory(targetLocation)
 
-            val generator = Generator()
-                .withDatabase(database)
-                .withTarget(target)
+        val generator = Generator()
+            .withDatabase(database)
+            .withTarget(target)
 
-            val jdbc = Jdbc()
-                .withUrl(jdbcUrl)
-                .withUser(dbUser)
-                .withPassword(dbPassword)
+        val jdbc = Jdbc()
+            .withUrl(jdbcUrl)
+            .withUser(dbUser)
+            .withPassword(dbPassword)
 
-            GenerationTool.generate(
-                Configuration()
-                    .withGenerator(generator)
-                    .withJdbc(jdbc)
-            )
-        } finally {
-            dataSource.connection.close()
-        }
+        GenerationTool.generate(
+            Configuration()
+                .withGenerator(generator)
+                .withJdbc(jdbc)
+        )
     }
 }
