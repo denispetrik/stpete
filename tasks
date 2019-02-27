@@ -2,8 +2,9 @@
 - Configurable 'sunny day' threshold (S)
 - Move to Heroku PostgresSQL (L)
 - Optimize thread-pools startup delays (S)
-- Extract diff calculator from ForecastChecker (M)
 - Stop in-memory HSQLDB that is started in generateJooq gradle task
 - User-friendly forecast message (S)
+- Check if 'upsert' is supported by HSQLDB and rewrite ForecastChecker.upsertAll() (S)
 
 + Notifications as separate functionality (M)
++ Extract diff calculator from ForecastChecker (M)
