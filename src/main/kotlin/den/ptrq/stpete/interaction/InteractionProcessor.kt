@@ -46,7 +46,7 @@ class InteractionProcessor(
         }
 
         if (subscription != null) {
-            val forecastList = forecastDao.getActual().asSequence()
+            val forecastList = forecastDao.selectActual().asSequence()
                 .filter { it.clouds <= 40 }
                 .toList()
             val message = formMessage(forecastList)

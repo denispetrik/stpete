@@ -18,6 +18,10 @@ import org.springframework.web.client.RestTemplate
  * @author petrique
  */
 
+@Target(AnnotationTarget.CLASS)
+@Retention
+annotation class MockableInTests
+
 @Configuration
 class CoreConfiguration {
     @Bean

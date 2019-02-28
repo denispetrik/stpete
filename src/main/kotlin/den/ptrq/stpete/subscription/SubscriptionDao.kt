@@ -38,6 +38,14 @@ class SubscriptionDao(private val context: DSLContext) {
             .fetchOne(mapper)
     }
 
+    fun selectByUserId(userId: Long): Subscription {
+        log.info("selectByUserId(userId={})", userId)
+        return context
+            .selectFrom(SUBSCRIPTION)
+            .where(SUBSCRIPTION.USER_ID.equal(userId))
+            .fetchOne(mapper)
+    }
+
     fun selectAll(): List<Subscription> {
         log.info("selectAll()")
         return context

@@ -61,6 +61,14 @@ class InteractionDao(
             .fetchOne(this::mapper)
     }
 
+    fun selectByUpdateId(updateId: Long): Interaction {
+        log.info("selectByUpdateId(updateId={})", updateId)
+        return context
+            .selectFrom(INTERACTION)
+            .where(INTERACTION.UPDATE_ID.equal(updateId))
+            .fetchOne(this::mapper)
+    }
+
     fun selectAll(): List<Interaction> {
         log.info("selectAll()")
         return context

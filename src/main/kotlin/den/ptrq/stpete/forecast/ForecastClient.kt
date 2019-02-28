@@ -1,12 +1,14 @@
 package den.ptrq.stpete.forecast
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import den.ptrq.stpete.MockableInTests
 import den.ptrq.stpete.get
 import org.springframework.web.client.RestTemplate
 
 /**
  * @author petrique
  */
+@MockableInTests
 class ForecastClient(
     private val restTemplate: RestTemplate,
     token: String

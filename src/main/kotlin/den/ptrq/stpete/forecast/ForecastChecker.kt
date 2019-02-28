@@ -27,7 +27,7 @@ class ForecastChecker(
 
         val forecastResponse = forecastClient.getForecast()
         val newForecastItems = forecastResponse.forecastItems
-        val oldForecasts = forecastDao.getActual()
+        val oldForecasts = forecastDao.selectActual()
 
         transactionTemplate.execute {
             val newForecasts = upsertAll(newForecastItems, oldForecasts)

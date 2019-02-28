@@ -9,6 +9,7 @@ import org.jooq.meta.jaxb.Target
 
 plugins {
     kotlin("jvm") version "1.3.21"
+    kotlin("plugin.allopen") version "1.3.21"
     kotlin("plugin.spring") version "1.3.21"
     id("org.springframework.boot") version "2.1.1.RELEASE"
 }
@@ -25,6 +26,10 @@ apply(plugin = "io.spring.dependency-management")
 
 group = "den.ptrq"
 version = "0.0.1-SNAPSHOT"
+
+allOpen {
+    annotation("den.ptrq.stpete.MockableInTests")
+}
 
 sourceSets {
     main {

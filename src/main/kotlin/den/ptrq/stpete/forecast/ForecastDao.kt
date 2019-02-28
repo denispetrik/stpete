@@ -45,8 +45,8 @@ class ForecastDao(private val context: DSLContext) {
             .fetchOne(mapper)
     }
 
-    fun getActual(): List<Forecast> {
-        log.info("getActual()")
+    fun selectActual(): List<Forecast> {
+        log.info("selectActual()")
         return context
             .selectFrom(FORECAST)
             .where(FORECAST.EPOCH_TIME.greaterOrEqual(Instant.now().epochSecond))

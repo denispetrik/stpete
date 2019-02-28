@@ -8,3 +8,4 @@
 
 + Notifications as separate functionality (M)
 + Extract diff calculator from ForecastChecker (M)
++ Integration tests for success paths (M)

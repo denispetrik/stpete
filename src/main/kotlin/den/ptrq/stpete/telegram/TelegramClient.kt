@@ -1,5 +1,6 @@
 package den.ptrq.stpete.telegram
 
+import den.ptrq.stpete.MockableInTests
 import den.ptrq.stpete.get
 import den.ptrq.stpete.post
 import org.springframework.web.client.RestTemplate
@@ -7,6 +8,7 @@ import org.springframework.web.client.RestTemplate
 /**
  * @author petrique
  */
+@MockableInTests
 class TelegramClient(
     private val restTemplate: RestTemplate,
     token: String
