@@ -1,5 +1,7 @@
 package den.ptrq.stpete.forecast
 
+import den.ptrq.stpete.TEN_MINUTES
+import den.ptrq.stpete.THIRTY_SECONDS
 import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
@@ -21,7 +23,7 @@ class ForecastChecker(
     private val subscriptionDao: SubscriptionDao
 ) {
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = TEN_MINUTES, initialDelay = THIRTY_SECONDS)
     fun checkForecast() {
         log.info("checking forecast")
 

@@ -1,5 +1,7 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.TEN_SECONDS
+import den.ptrq.stpete.THIRTY_SECONDS
 import den.ptrq.stpete.forecast.Forecast
 import den.ptrq.stpete.forecast.ForecastDao
 import den.ptrq.stpete.notification.NotificationSender
@@ -23,7 +25,7 @@ class InteractionProcessor(
     private val forecastDao: ForecastDao
 ) {
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = TEN_SECONDS, initialDelay = THIRTY_SECONDS)
     fun processInteractions() {
         log.info("processing interactions")
         interactionDao.selectUnprocessed(limit = 3).forEach { process(it) }

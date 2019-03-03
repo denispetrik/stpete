@@ -3,3 +3,8 @@ server:
 
 spring:
   main.banner-mode: 'off'
+
+database.url: ${DATABASE_URL}
+
+telegramToken: ${TELEGRAM_TOKEN}
+forecastToken: ${FORECAST_TOKEN}

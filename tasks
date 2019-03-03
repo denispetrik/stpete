@@ -1,11 +1,10 @@
 - Long polling to Telegram bot api (XL)
 - Configurable 'sunny day' threshold (S)
-- Move to Heroku PostgresSQL (L)
 - Optimize thread-pools startup delays (S)
-- Stop in-memory HSQLDB that is started in generateJooq gradle task
 - User-friendly forecast message (S)
-- Check if 'upsert' is supported by HSQLDB and rewrite ForecastChecker.upsertAll() (S)
+- Check if 'upsert' is supported by H2 and rewrite ForecastChecker.upsertAll() (S)
 
 + Notifications as separate functionality (M)
 + Extract diff calculator from ForecastChecker (M)
 + Integration tests for success paths (M)
++ Move to Heroku PostgresSQL (L)

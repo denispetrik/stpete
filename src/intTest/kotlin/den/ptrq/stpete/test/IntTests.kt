@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
  */
 @SpringBootTest(
     classes = [Application::class, TestConfiguration::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = ["scheduling.enable=false"]
 )
 abstract class IntTests

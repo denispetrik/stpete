@@ -1,5 +1,7 @@
 package den.ptrq.stpete.notification
 
+import den.ptrq.stpete.TEN_SECONDS
+import den.ptrq.stpete.THIRTY_SECONDS
 import den.ptrq.stpete.telegram.TelegramClient
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -14,7 +16,7 @@ class NotificationSender(
     private val notificationDao: NotificationDao
 ) {
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = TEN_SECONDS, initialDelay = THIRTY_SECONDS)
     fun sendNewNotifications() {
         log.info("sending new notifications")
         notificationDao.selectNew(limit = 3).forEach { send(it) }

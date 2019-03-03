@@ -1,2 +1,5 @@
+spring:
+  main.allow-bean-definition-overriding: true
+
 telegramToken: 'telegramToken'
 forecastToken: 'forecastToken'

@@ -73,10 +73,9 @@ class ForecastTests : IntTests() {
         assertThat(notUpdatedForecast.clouds).isEqualTo(0)
         assertThat(newForecast.clouds).isEqualTo(0)
 
-        val notification = notificationDao.selectNew(limit = 1).first()
+        val notification = notificationDao.selectAll().first { it.chatId == subscription.chatId }
 
         assertThat(notification.status).isEqualTo(Notification.Status.NEW)
-        assertThat(notification.chatId).isEqualTo(subscription.chatId)
         assertThat(notification.message).isEqualTo(message)
 
         notificationSender.sendNewNotifications()

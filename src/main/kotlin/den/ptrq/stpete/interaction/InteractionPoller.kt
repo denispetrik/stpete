@@ -1,5 +1,7 @@
 package den.ptrq.stpete.interaction
 
+import den.ptrq.stpete.TEN_MINUTES
+import den.ptrq.stpete.THIRTY_SECONDS
 import den.ptrq.stpete.common.ChatType
 import den.ptrq.stpete.telegram.TelegramClient
 import den.ptrq.stpete.telegram.Update
@@ -18,7 +20,7 @@ class InteractionPoller(
     private val interactionDao: InteractionDao
 ) {
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = TEN_MINUTES, initialDelay = THIRTY_SECONDS)
     fun pollInteractions() {
         log.info("polling new bot interactions")
 

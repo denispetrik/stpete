@@ -55,6 +55,13 @@ class NotificationDao(private val context: DSLContext) {
             .fetch(mapper)
     }
 
+    fun selectAll(): List<Notification> {
+        log.info("selectAll()")
+        return context
+            .selectFrom(NOTIFICATION)
+            .fetch(mapper)
+    }
+
     companion object {
         private val log = LoggerFactory.getLogger(NotificationDao::class.java)
         private val mapper = RecordMapper<NotificationRecord, Notification> { record ->
