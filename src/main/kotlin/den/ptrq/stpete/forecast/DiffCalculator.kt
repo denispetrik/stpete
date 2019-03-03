@@ -21,7 +21,7 @@ class DiffCalculator {
             this.isSunny() != another.isSunny()
         }
 
-    private fun Forecast.isSunny() = clouds <= 40
+    private fun Forecast.isSunny() = clouds <= 20
 
     companion object {
         private val log = LoggerFactory.getLogger(DiffCalculator::class.java)

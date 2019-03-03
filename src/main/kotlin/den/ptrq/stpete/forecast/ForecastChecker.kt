@@ -36,9 +36,10 @@ class ForecastChecker(
 
             val diff = diffCalculator.calculateDiff(newForecasts, oldForecasts)
             val message = formMessage(diff)
-
-            subscriptionDao.selectAll().forEach {
-                notificationSender.sendAsynchronously(it.chatId, message)
+            if (message.isNotBlank()) {
+                subscriptionDao.selectAll().forEach {
+                    notificationSender.sendAsynchronously(it.chatId, message)
+                }
             }
         }
     }

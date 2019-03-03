@@ -48,11 +48,11 @@ class InteractionProcessor(
         }
 
         if (subscription != null) {
-            val forecastList = forecastDao.selectActual().asSequence()
-                .filter { it.clouds <= 40 }
-                .toList()
+            val forecastList = forecastDao.selectActual().filter { it.clouds <= 20 }
             val message = formMessage(forecastList)
-            notificationSender.sendAsynchronously(subscription!!.chatId, message)
+            if (message.isNotBlank()) {
+                notificationSender.sendAsynchronously(subscription!!.chatId, message)
+            }
         }
     }
 
