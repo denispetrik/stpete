@@ -12,8 +12,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
-import java.time.Instant
-import java.time.ZoneId
 import java.time.ZonedDateTime
 
 /**
@@ -30,6 +28,8 @@ class ForecastTests : IntTests() {
     lateinit var notificationDao: NotificationDao
     @Autowired
     lateinit var forecastChecker: ForecastChecker
+    @Autowired
+    lateinit var forecastMessageCreator: ForecastMessageCreator
     @Autowired
     lateinit var notificationSender: NotificationSender
 
@@ -63,11 +63,12 @@ class ForecastTests : IntTests() {
 
         forecastChecker.checkForecast()
 
-        val forecastMap = forecastDao.selectActual().associateBy { it.epochTime }
+        val forecasts = forecastDao.selectActual()
+        val forecastMap = forecasts.associateBy { it.epochTime }
         val updatedForecast = forecastMap[cloudyForecastEpochTime]!!
         val notUpdatedForecast = forecastMap[sunnyForecastEpochTime]!!
         val newForecast = forecastMap[newForecastEpochTime]!!
-        val message = formMessage(listOf(updatedForecast, newForecast))
+        val message = forecastMessageCreator.createSunnyDaysMessage(forecasts)
 
         assertThat(updatedForecast.clouds).isEqualTo(0)
         assertThat(notUpdatedForecast.clouds).isEqualTo(0)
@@ -85,16 +86,5 @@ class ForecastTests : IntTests() {
         assertThat(sentNotification.status).isEqualTo(Notification.Status.SENT)
 
         verify(telegramClient).sendMessage(subscription.chatId, message)
-    }
-
-    private fun formMessage(forecastList: List<Forecast>): String {
-        return forecastList.asSequence()
-            .map { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it.epochTime), ZoneId.of("+3")) }
-            .groupBy { it.dayOfMonth }
-            .map { (day, dates) ->
-                val hours = dates.joinToString(separator = "; ") { it.hour.toString() }
-                "day = $day, hours: $hours"
-            }
-            .joinToString(separator = "\n")
     }
 }

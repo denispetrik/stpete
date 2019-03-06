@@ -2,22 +2,20 @@ package den.ptrq.stpete.interaction
 
 import den.ptrq.stpete.TEN_SECONDS
 import den.ptrq.stpete.THIRTY_SECONDS
-import den.ptrq.stpete.forecast.Forecast
 import den.ptrq.stpete.forecast.ForecastDao
+import den.ptrq.stpete.forecast.ForecastMessageCreator
 import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.Subscription
 import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 /**
  * @author petrique
  */
 class InteractionProcessor(
+    private val forecastMessageCreator: ForecastMessageCreator,
     private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
     private val interactionDao: InteractionDao,
@@ -38,33 +36,20 @@ class InteractionProcessor(
             .filter { it.type == KeyWord.Type.BOT_COMMAND }
             .any { it.value == "start" }
 
-        var subscription: Subscription? = null
         transactionTemplate.execute {
             interactionDao.markAsProcessed(interaction)
+
             if (isStartCommandPresent) {
-                subscription = createSubscription(interaction)
-                subscriptionDao.insert(subscription!!)
+                val subscription = createSubscription(interaction)
+                subscriptionDao.insert(subscription)
+
+                val sunnyForecasts = forecastDao.selectActual().filter { it.clouds <= 20 }
+                if (sunnyForecasts.isNotEmpty()) {
+                    val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
+                    notificationSender.sendAsynchronously(subscription.chatId, message)
+                }
             }
         }
-
-        if (subscription != null) {
-            val forecastList = forecastDao.selectActual().filter { it.clouds <= 20 }
-            val message = formMessage(forecastList)
-            if (message.isNotBlank()) {
-                notificationSender.sendAsynchronously(subscription!!.chatId, message)
-            }
-        }
-    }
-
-    private fun formMessage(forecastList: List<Forecast>): String {
-        return forecastList.asSequence()
-            .map { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it.epochTime), ZoneId.of("+3")) }
-            .groupBy { it.dayOfMonth }
-            .map { (day, dates) ->
-                val hours = dates.joinToString(separator = "; ") { it.hour.toString() }
-                "day = $day, hours: $hours"
-            }
-            .joinToString(separator = "\n")
     }
 
     private fun createSubscription(interaction: Interaction) = Subscription(

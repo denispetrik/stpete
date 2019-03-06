@@ -7,17 +7,14 @@ import den.ptrq.stpete.subscription.SubscriptionDao
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.support.TransactionTemplate
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 /**
  * @author petrique
  */
 class ForecastChecker(
     private val forecastClient: ForecastClient,
+    private val forecastMessageCreator: ForecastMessageCreator,
     private val notificationSender: NotificationSender,
-    private val diffCalculator: DiffCalculator,
     private val transactionTemplate: TransactionTemplate,
     private val forecastDao: ForecastDao,
     private val subscriptionDao: SubscriptionDao
@@ -27,16 +24,14 @@ class ForecastChecker(
     fun checkForecast() {
         log.info("checking forecast")
 
-        val forecastResponse = forecastClient.getForecast()
-        val newForecastItems = forecastResponse.forecastItems
+        val newForecastItems = forecastClient.getForecast().forecastItems
         val oldForecasts = forecastDao.selectActual()
 
         transactionTemplate.execute {
             val newForecasts = upsertAll(newForecastItems, oldForecasts)
 
-            val diff = diffCalculator.calculateDiff(newForecasts, oldForecasts)
-            val message = formMessage(diff)
-            if (message.isNotBlank()) {
+            if (newForecasts.differsFrom(oldForecasts)) {
+                val message = forecastMessageCreator.createSunnyDaysMessage(newForecasts)
                 subscriptionDao.selectAll().forEach {
                     notificationSender.sendAsynchronously(it.chatId, message)
                 }
@@ -62,18 +57,17 @@ class ForecastChecker(
         }
     }
 
-    private fun formMessage(forecastList: List<Forecast>): String {
-        return forecastList.asSequence()
-            .map { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it.epochTime), ZoneId.of("+3")) }
-            .groupBy { it.dayOfMonth }
-            .map { (day, dates) ->
-                val hours = dates.joinToString(separator = "; ") { it.hour.toString() }
-                "day = $day, hours: $hours"
-            }
-            .joinToString(separator = "\n")
-    }
-
     companion object {
         private val log = LoggerFactory.getLogger(ForecastChecker::class.java)
     }
 }
+
+private fun List<Forecast>.differsFrom(oldForecasts: List<Forecast>): Boolean {
+    val oldForecastMap = oldForecasts.associateBy { it.epochTime }
+    return this.any { it.differsFrom(oldForecastMap[it.epochTime]) }
+}
+
+private fun Forecast.differsFrom(another: Forecast?): Boolean =
+    another == null || this.isSunny() != another.isSunny()
+
+private fun Forecast.isSunny() = clouds <= 20

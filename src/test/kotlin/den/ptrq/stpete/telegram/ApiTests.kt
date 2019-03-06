@@ -1,13 +1,11 @@
-package den.ptrq.stpete.client.telegram
+package den.ptrq.stpete.telegram
 
-import den.ptrq.stpete.telegram.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 /**
  * @author petrique
  */
-
 class ApiTests {
     @Test
     fun `should parse commands`() {

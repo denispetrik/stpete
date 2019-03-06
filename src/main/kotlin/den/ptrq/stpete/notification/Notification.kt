@@ -16,7 +16,7 @@ class Notification(
 
     enum class Status(val code: String) {
         NEW("new"),
-        SENT("send");
+        SENT("sent");
 
         companion object {
             fun byCode(code: String): Status = values().first { it.code == code }

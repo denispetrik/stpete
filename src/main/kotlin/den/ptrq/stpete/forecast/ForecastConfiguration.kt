@@ -25,20 +25,20 @@ class ForecastConfiguration {
     ) = ForecastClient(restTemplate, token)
 
     @Bean
-    fun diffCalculator() = DiffCalculator()
+    fun forecastMessageCreator() = ForecastMessageCreator()
 
     @Bean
     fun forecastChecker(
         forecastClient: ForecastClient,
         notificationSender: NotificationSender,
-        diffCalculator: DiffCalculator,
+        forecastMessageCreator: ForecastMessageCreator,
         transactionTemplate: TransactionTemplate,
         forecastDao: ForecastDao,
         subscriptionDao: SubscriptionDao
     ) = ForecastChecker(
         forecastClient,
+        forecastMessageCreator,
         notificationSender,
-        diffCalculator,
         transactionTemplate,
         forecastDao,
         subscriptionDao

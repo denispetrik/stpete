@@ -1,10 +1,10 @@
 - Long polling to Telegram bot api (XL)
 - Configurable 'sunny day' threshold (S)
 - Optimize thread-pools startup delays (S)
-- User-friendly forecast message (S)
 - Check if 'upsert' is supported by H2 and rewrite ForecastChecker.upsertAll() (S)
 
 + Notifications as separate functionality (M)
 + Extract diff calculator from ForecastChecker (M)
 + Integration tests for success paths (M)
 + Move to Heroku PostgresSQL (L)
++ User-friendly forecast message (S->M)
