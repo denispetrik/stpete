@@ -25,11 +25,15 @@ class ForecastConfiguration {
     ) = ForecastClient(restTemplate, token)
 
     @Bean
+    fun sunnyPeriodService() = SunnyPeriodService()
+
+    @Bean
     fun forecastMessageCreator() = ForecastMessageCreator()
 
     @Bean
     fun forecastChecker(
         forecastClient: ForecastClient,
+        sunnyPeriodService: SunnyPeriodService,
         notificationSender: NotificationSender,
         forecastMessageCreator: ForecastMessageCreator,
         transactionTemplate: TransactionTemplate,
@@ -37,6 +41,7 @@ class ForecastConfiguration {
         subscriptionDao: SubscriptionDao
     ) = ForecastChecker(
         forecastClient,
+        sunnyPeriodService,
         forecastMessageCreator,
         notificationSender,
         transactionTemplate,

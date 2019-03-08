@@ -13,6 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate
  */
 class ForecastChecker(
     private val forecastClient: ForecastClient,
+    private val sunnyPeriodService: SunnyPeriodService,
     private val forecastMessageCreator: ForecastMessageCreator,
     private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
@@ -30,8 +31,9 @@ class ForecastChecker(
         transactionTemplate.execute {
             val newForecasts = upsertAll(newForecastItems, oldForecasts)
 
-            if (newForecasts.differsFrom(oldForecasts)) {
-                val message = forecastMessageCreator.createSunnyDaysMessage(newForecasts)
+            if (sunnyPeriodService.isDifferent(newForecasts, oldForecasts)) {
+                val sunnyForecasts = sunnyPeriodService.filterSunny(newForecasts)
+                val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
                 subscriptionDao.selectAll().forEach {
                     notificationSender.sendAsynchronously(it.chatId, message)
                 }
@@ -61,13 +63,3 @@ class ForecastChecker(
         private val log = LoggerFactory.getLogger(ForecastChecker::class.java)
     }
 }
-
-private fun List<Forecast>.differsFrom(oldForecasts: List<Forecast>): Boolean {
-    val oldForecastMap = oldForecasts.associateBy { it.epochTime }
-    return this.any { it.differsFrom(oldForecastMap[it.epochTime]) }
-}
-
-private fun Forecast.differsFrom(another: Forecast?): Boolean =
-    another == null || this.isSunny() != another.isSunny()
-
-private fun Forecast.isSunny() = clouds <= 20

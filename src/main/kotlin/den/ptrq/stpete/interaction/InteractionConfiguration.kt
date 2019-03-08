@@ -3,6 +3,7 @@ package den.ptrq.stpete.interaction
 import com.fasterxml.jackson.databind.ObjectMapper
 import den.ptrq.stpete.forecast.ForecastDao
 import den.ptrq.stpete.forecast.ForecastMessageCreator
+import den.ptrq.stpete.forecast.SunnyPeriodService
 import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.SubscriptionDao
 import den.ptrq.stpete.telegram.TelegramClient
@@ -30,6 +31,7 @@ class InteractionConfiguration {
     @Bean
     fun interactionProcessor(
         forecastMessageCreator: ForecastMessageCreator,
+        sunnyPeriodService: SunnyPeriodService,
         notificationSender: NotificationSender,
         transactionTemplate: TransactionTemplate,
         interactionDao: InteractionDao,
@@ -37,6 +39,7 @@ class InteractionConfiguration {
         forecastDao: ForecastDao
     ) = InteractionProcessor(
         forecastMessageCreator,
+        sunnyPeriodService,
         notificationSender,
         transactionTemplate,
         interactionDao,

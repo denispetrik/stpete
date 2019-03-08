@@ -4,6 +4,7 @@ import den.ptrq.stpete.TEN_SECONDS
 import den.ptrq.stpete.THIRTY_SECONDS
 import den.ptrq.stpete.forecast.ForecastDao
 import den.ptrq.stpete.forecast.ForecastMessageCreator
+import den.ptrq.stpete.forecast.SunnyPeriodService
 import den.ptrq.stpete.notification.NotificationSender
 import den.ptrq.stpete.subscription.Subscription
 import den.ptrq.stpete.subscription.SubscriptionDao
@@ -16,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate
  */
 class InteractionProcessor(
     private val forecastMessageCreator: ForecastMessageCreator,
+    private val sunnyPeriodService: SunnyPeriodService,
     private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
     private val interactionDao: InteractionDao,
@@ -42,13 +44,17 @@ class InteractionProcessor(
             if (isStartCommandPresent) {
                 val subscription = createSubscription(interaction)
                 subscriptionDao.insert(subscription)
-
-                val sunnyForecasts = forecastDao.selectActual().filter { it.clouds <= 20 }
-                if (sunnyForecasts.isNotEmpty()) {
-                    val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
-                    notificationSender.sendAsynchronously(subscription.chatId, message)
-                }
+                sendSunnyDaysMessage(subscription)
             }
+        }
+    }
+
+    private fun sendSunnyDaysMessage(subscription: Subscription) {
+        val actualForecasts = forecastDao.selectActual()
+        val sunnyForecasts = sunnyPeriodService.filterSunny(actualForecasts)
+        if (sunnyForecasts.isNotEmpty()) {
+            val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
+            notificationSender.sendAsynchronously(subscription.chatId, message)
         }
     }
 
