@@ -27,12 +27,7 @@ class InteractionPoller(
         val latestUpdateId = interactionDao.selectLatest().map { it.updateId }.orElse(0)
         log.info("latest updateId={}", latestUpdateId)
 
-        val response = telegramClient.getUpdates(offset = latestUpdateId + 1, limit = 3)
-        if (!response.ok) {
-            throw RuntimeException("telegram bot api call failed")
-        }
-
-        val updates = response.result
+        val updates = telegramClient.getUpdates(offset = latestUpdateId + 1, limit = 3)
         if (updates.isEmpty()) {
             log.info("no interaction has been received")
             return

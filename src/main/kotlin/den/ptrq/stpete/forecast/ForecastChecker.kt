@@ -25,7 +25,7 @@ class ForecastChecker(
     fun checkForecast() {
         log.info("checking forecast")
 
-        val newForecastItems = forecastClient.getForecast().forecastItems
+        val newForecastItems = forecastClient.getForecast()
         val oldForecasts = forecastDao.selectActual()
 
         transactionTemplate.execute {

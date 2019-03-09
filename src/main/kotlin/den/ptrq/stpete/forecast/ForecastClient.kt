@@ -2,6 +2,8 @@ package den.ptrq.stpete.forecast
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import den.ptrq.stpete.MockableInTests
+import den.ptrq.stpete.Response.Failed
+import den.ptrq.stpete.Response.Successful
 import den.ptrq.stpete.get
 import org.springframework.web.client.RestTemplate
 
@@ -16,10 +18,14 @@ class ForecastClient(
     private val cityId = 498817
     private val url = "https://api.openweathermap.org/data/2.5/forecast?APPID=$token&id=$cityId&units=metric"
 
-    fun getForecast(): ForecastResponse {
-        return restTemplate
-            .get<ForecastResponse>(url)
-            .getValueOrElse { throw RuntimeException("forecast call failed with error ${getError()}") }
+    fun getForecast(): List<ForecastItem> {
+        val response = restTemplate.get<ForecastResponse>(url)
+        return when (response) {
+            is Successful -> with(response.result) {
+                if (code == "200") forecastItems else throw RuntimeException("forecast call failed with code=$code")
+            }
+            is Failed -> throw RuntimeException("forecast call failed with error ${response.error}")
+        }
     }
 }
 

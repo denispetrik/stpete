@@ -34,29 +34,39 @@ class CoreConfiguration {
     fun restTemplate(builder: RestTemplateBuilder) = builder.build()
 }
 
-inline fun <reified T : Any> RestTemplate.get(url: String): Result<T, ResponseError> =
+inline fun <reified T : Any> RestTemplate.get(url: String): Response<T, ResponseError> =
     get(url, object : ParameterizedTypeReference<T>() {})
 
-inline fun <reified T : Any> RestTemplate.post(url: String, request: Any): Result<T, ResponseError> =
+inline fun <reified T : Any> RestTemplate.post(url: String, request: Any): Response<T, ResponseError> =
     post(url, request, object : ParameterizedTypeReference<T>() {})
 
 fun <T : Any> RestTemplate.get(
     url: String,
     responseType: ParameterizedTypeReference<T>
-): Result<T, ResponseError> = exchange(url, HttpMethod.GET, null, responseType).asResult()
+): Response<T, ResponseError> = exchange(url, HttpMethod.GET, null, responseType).asResponse()
 
 fun <T : Any> RestTemplate.post(
     url: String,
     request: Any,
     responseType: ParameterizedTypeReference<T>
-): Result<T, ResponseError> = exchange(url, HttpMethod.POST, HttpEntity(request), responseType).asResult()
+): Response<T, ResponseError> = exchange(url, HttpMethod.POST, HttpEntity(request), responseType).asResponse()
 
-private fun <T : Any> ResponseEntity<T>.asResult(): Result<T, ResponseError> =
+private fun <T : Any> ResponseEntity<T>.asResponse(): Response<T, ResponseError> =
     if (statusCode == HttpStatus.OK) {
-        Result.success(body ?: throw RuntimeException("response body is empty"))
+        Response.successful(body ?: throw RuntimeException("response body is empty"))
     } else {
-        Result.fail(ResponseError.TECHNICAL_ERROR)
+        Response.failed(ResponseError.TECHNICAL_ERROR)
     }
+
+sealed class Response<R : Any, E : Any> {
+    class Successful<R : Any, E : Any>(val result: R) : Response<R, E>()
+    class Failed<R : Any, E : Any>(val error: E) : Response<R, E>()
+
+    companion object {
+        fun <R : Any, E : Any> successful(result: R) = Successful<R, E>(result)
+        fun <R : Any, E : Any> failed(error: E) = Failed<R, E>(error)
+    }
+}
 
 enum class ResponseError {
     TECHNICAL_ERROR

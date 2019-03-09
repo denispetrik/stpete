@@ -17,7 +17,7 @@ class SendMessageRequest(
     @JsonProperty("text") val text: String
 )
 
-class Response<T>(
+class TelegramResponse<T>(
     @JsonProperty("ok") val ok: Boolean,
     @JsonProperty("result") val result: T
 )

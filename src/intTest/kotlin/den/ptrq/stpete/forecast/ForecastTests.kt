@@ -50,16 +50,13 @@ class ForecastTests : IntTests() {
 
         val newForecastEpochTime = ZonedDateTime.now().plusHours(3).toEpochSecond()
 
-        val forecastResponse = ForecastResponse(
-            code = "200",
-            forecastItems = listOf(
-                ForecastItem(cloudyForecastEpochTime, Clouds(percentage = 0)),
-                ForecastItem(sunnyForecastEpochTime, Clouds(percentage = 0)),
-                ForecastItem(newForecastEpochTime, Clouds(percentage = 0))
-            )
+        val forecastItems = listOf(
+            ForecastItem(cloudyForecastEpochTime, Clouds(percentage = 0)),
+            ForecastItem(sunnyForecastEpochTime, Clouds(percentage = 0)),
+            ForecastItem(newForecastEpochTime, Clouds(percentage = 0))
         )
 
-        `when`(forecastClient.getForecast()).thenReturn(forecastResponse)
+        `when`(forecastClient.getForecast()).thenReturn(forecastItems)
 
         forecastChecker.checkForecast()
 

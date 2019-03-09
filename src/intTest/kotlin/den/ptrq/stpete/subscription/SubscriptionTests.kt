@@ -42,9 +42,8 @@ class SubscriptionTests : IntTests() {
         testUtils.insertNewInteraction()
 
         val update = createUpdate()
-        val response = Response(ok = true, result = listOf(update))
 
-        `when`(telegramClient.getUpdates(anyLong(), anyInt())).thenReturn(response)
+        `when`(telegramClient.getUpdates(anyLong(), anyInt())).thenReturn(listOf(update))
 
         interactionPoller.pollInteractions()
 
