@@ -33,9 +33,11 @@ class ForecastChecker(
 
             if (sunnyPeriodService.isDifferent(newForecasts, oldForecasts)) {
                 val sunnyForecasts = sunnyPeriodService.filterSunny(newForecasts)
-                val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
-                subscriptionDao.selectAll().forEach {
-                    notificationSender.sendAsynchronously(it.chatId, message)
+                if (sunnyForecasts.isNotEmpty()) {
+                    val message = forecastMessageCreator.createSunnyDaysMessage(sunnyForecasts)
+                    subscriptionDao.selectAll().forEach {
+                        notificationSender.sendAsynchronously(it.chatId, message)
+                    }
                 }
             }
         }

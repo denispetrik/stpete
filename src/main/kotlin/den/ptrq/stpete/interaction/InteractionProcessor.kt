@@ -16,8 +16,8 @@ import org.springframework.transaction.support.TransactionTemplate
  * @author petrique
  */
 class InteractionProcessor(
-    private val forecastMessageCreator: ForecastMessageCreator,
     private val sunnyPeriodService: SunnyPeriodService,
+    private val forecastMessageCreator: ForecastMessageCreator,
     private val notificationSender: NotificationSender,
     private val transactionTemplate: TransactionTemplate,
     private val interactionDao: InteractionDao,

@@ -30,16 +30,16 @@ class InteractionConfiguration {
 
     @Bean
     fun interactionProcessor(
-        forecastMessageCreator: ForecastMessageCreator,
         sunnyPeriodService: SunnyPeriodService,
+        forecastMessageCreator: ForecastMessageCreator,
         notificationSender: NotificationSender,
         transactionTemplate: TransactionTemplate,
         interactionDao: InteractionDao,
         subscriptionDao: SubscriptionDao,
         forecastDao: ForecastDao
     ) = InteractionProcessor(
-        forecastMessageCreator,
         sunnyPeriodService,
+        forecastMessageCreator,
         notificationSender,
         transactionTemplate,
         interactionDao,

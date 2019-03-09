@@ -15,12 +15,17 @@ class SunnyPeriodService(
 
     fun isDifferent(newForecasts: List<Forecast>, oldForecasts: List<Forecast>): Boolean {
         val oldForecastMap = oldForecasts.associateBy { it.epochTime }
-        return newForecasts.any { it.differsFrom(oldForecastMap[it.epochTime]) }
+
+        return newForecasts.any { newForecast ->
+            val oldForecast = oldForecastMap[newForecast.epochTime]
+            if (oldForecast == null) {
+                isSunny(newForecast)
+            } else {
+                isSunny(newForecast) != isSunny(oldForecast)
+            }
+        }
     }
 
     private fun isSunny(forecast: Forecast): Boolean =
         forecast.dateTime.inBetween(startOfDay, endOfDay) && forecast.clouds <= 20
-
-    private fun Forecast.differsFrom(another: Forecast?): Boolean =
-        another == null || isSunny(this) != isSunny(another)
 }
