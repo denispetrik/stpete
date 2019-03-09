@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.client.RestTemplate
+import java.time.LocalTime
 
 /**
  * @author petrique
@@ -25,7 +26,10 @@ class ForecastConfiguration {
     ) = ForecastClient(restTemplate, token)
 
     @Bean
-    fun sunnyPeriodService() = SunnyPeriodService()
+    fun sunnyPeriodService(
+        @Value("#{T(java.time.LocalTime).parse('\${daytime.startOfDay}')}") startOfDay: LocalTime,
+        @Value("#{T(java.time.LocalTime).parse('\${daytime.endOfDay}')}") endOfDay: LocalTime
+    ) = SunnyPeriodService(startOfDay, endOfDay)
 
     @Bean
     fun forecastMessageCreator() = ForecastMessageCreator()

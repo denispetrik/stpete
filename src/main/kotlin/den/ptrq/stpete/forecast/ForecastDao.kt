@@ -53,6 +53,13 @@ class ForecastDao(private val context: DSLContext) {
             .fetch(mapper)
     }
 
+    fun selectAll(): List<Forecast> {
+        log.info("selectAll()")
+        return context
+            .selectFrom(FORECAST)
+            .fetch(mapper)
+    }
+
     companion object {
         private val log = LoggerFactory.getLogger(ForecastDao::class.java)
         private val mapper = RecordMapper<ForecastRecord, Forecast> { record ->

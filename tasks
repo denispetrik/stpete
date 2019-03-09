@@ -8,3 +8,4 @@
 + Integration tests for success paths (M)
 + Move to Heroku PostgresSQL (L)
 + User-friendly forecast message (S->M)
++ Daytime forecast filter (S)

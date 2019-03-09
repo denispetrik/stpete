@@ -12,7 +12,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
-import java.time.ZonedDateTime
 
 /**
  * @author petrique
@@ -29,8 +28,6 @@ class ForecastTests : IntTests() {
     @Autowired
     lateinit var forecastChecker: ForecastChecker
     @Autowired
-    lateinit var forecastMessageCreator: ForecastMessageCreator
-    @Autowired
     lateinit var notificationSender: NotificationSender
 
     @MockBean
@@ -42,13 +39,12 @@ class ForecastTests : IntTests() {
     fun `should get fresh forecast and send notification`() {
         val subscription = testUtils.insertNewSubscription()
 
-        val cloudyForecastEpochTime = ZonedDateTime.now().plusHours(1).toEpochSecond()
+        val cloudyForecastEpochTime = 1550480400L
+        val sunnyForecastEpochTime = 1550491200L
+        val newForecastEpochTime = 1550577600L
+
         testUtils.insertNewForecast(epochTime = cloudyForecastEpochTime, clouds = 80)
-
-        val sunnyForecastEpochTime = ZonedDateTime.now().plusHours(2).toEpochSecond()
         testUtils.insertNewForecast(epochTime = sunnyForecastEpochTime, clouds = 0)
-
-        val newForecastEpochTime = ZonedDateTime.now().plusHours(3).toEpochSecond()
 
         val forecastItems = listOf(
             ForecastItem(cloudyForecastEpochTime, Clouds(percentage = 0)),
@@ -60,12 +56,11 @@ class ForecastTests : IntTests() {
 
         forecastChecker.checkForecast()
 
-        val forecasts = forecastDao.selectActual()
+        val forecasts = forecastDao.selectAll()
         val forecastMap = forecasts.associateBy { it.epochTime }
         val updatedForecast = forecastMap[cloudyForecastEpochTime]!!
         val notUpdatedForecast = forecastMap[sunnyForecastEpochTime]!!
         val newForecast = forecastMap[newForecastEpochTime]!!
-        val message = forecastMessageCreator.createSunnyDaysMessage(forecasts)
 
         assertThat(updatedForecast.clouds).isEqualTo(0)
         assertThat(notUpdatedForecast.clouds).isEqualTo(0)
@@ -73,8 +68,13 @@ class ForecastTests : IntTests() {
 
         val notification = notificationDao.selectAll().first { it.chatId == subscription.chatId }
 
+        val expectedMessage = """
+            18, periods: 12-18
+            19, periods: 15-18
+        """.trimIndent()
+
         assertThat(notification.status).isEqualTo(Notification.Status.NEW)
-        assertThat(notification.message).isEqualTo(message)
+        assertThat(notification.message).isEqualTo(expectedMessage)
 
         notificationSender.sendNewNotifications()
 
@@ -82,6 +82,6 @@ class ForecastTests : IntTests() {
 
         assertThat(sentNotification.status).isEqualTo(Notification.Status.SENT)
 
-        verify(telegramClient).sendMessage(subscription.chatId, message)
+        verify(telegramClient).sendMessage(subscription.chatId, expectedMessage)
     }
 }

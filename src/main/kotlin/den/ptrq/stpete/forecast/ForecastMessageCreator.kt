@@ -1,9 +1,5 @@
 package den.ptrq.stpete.forecast
 
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-
 /**
  * @author petrique
  */
@@ -44,6 +40,3 @@ fun splitToPeriods(hours: List<Int>): List<Pair<Int, Int>> {
     periods += Pair(begin, end + 3)
     return periods
 }
-
-private val Forecast.dateTime: ZonedDateTime
-    get() = ZonedDateTime.ofInstant(Instant.ofEpochSecond(this.epochTime), ZoneId.of("+3"))

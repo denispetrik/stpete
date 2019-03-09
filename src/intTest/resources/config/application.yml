@@ -3,3 +3,7 @@ spring:
 
 telegramToken: 'telegramToken'
 forecastToken: 'forecastToken'
+
+daytime:
+  startOfDay: '09:00'
+  endOfDay: '18:00'

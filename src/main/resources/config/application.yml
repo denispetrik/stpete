@@ -8,3 +8,7 @@ database.url: ${DATABASE_URL}
 
 telegramToken: ${TELEGRAM_TOKEN}
 forecastToken: ${FORECAST_TOKEN}
+
+daytime:
+  startOfDay: '09:00'
+  endOfDay: '18:00'
