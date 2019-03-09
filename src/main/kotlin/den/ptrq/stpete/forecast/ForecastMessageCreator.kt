@@ -1,5 +1,8 @@
 package den.ptrq.stpete.forecast
 
+import den.ptrq.stpete.monthName
+import java.time.LocalDate
+
 /**
  * @author petrique
  */
@@ -8,17 +11,20 @@ class ForecastMessageCreator {
     fun createSunnyDaysMessage(forecastList: List<Forecast>): String {
         return forecastList.asSequence()
             .map { it.dateTime }
-            .groupBy({ it.dayOfMonth }, { it.hour })
-            .map { (dayOfMonth, hours) -> sunnyDayText(dayOfMonth, hours) }
+            .groupBy({ it.toLocalDate() }, { it.hour })
+            .map { (date, hours) -> sunnyDayText(date, hours) }
             .joinToString("\n")
     }
-}
 
-private fun sunnyDayText(dayOfMonth: Int, hours: List<Int>): String {
-    val periodsString = splitToPeriods(hours).asSequence()
-        .map { "${it.first}-${it.second}" }
-        .joinToString(", ")
-    return "$dayOfMonth, periods: $periodsString"
+    private fun sunnyDayText(date: LocalDate, hours: List<Int>): String {
+        val monthName = monthName(date)
+
+        val periodsString = splitToPeriods(hours).asSequence()
+            .map { "${it.first}-${it.second}" }
+            .joinToString(", ")
+
+        return "${date.dayOfMonth} $monthName: $periodsString"
+    }
 }
 
 fun splitToPeriods(hours: List<Int>): List<Pair<Int, Int>> {

@@ -44,8 +44,8 @@ class ForecastMessageCreatorTests {
         )
 
         val expectedMessage = """
-            16, periods: 12-18
-            17, periods: 9-12, 18-21
+            16 февраля: 12-18
+            17 февраля: 9-12, 18-21
             """.trimIndent()
 
         val message = ForecastMessageCreator().createSunnyDaysMessage(forecastList)

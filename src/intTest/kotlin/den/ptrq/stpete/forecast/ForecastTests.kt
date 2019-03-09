@@ -69,8 +69,8 @@ class ForecastTests : IntTests() {
         val notification = notificationDao.selectAll().first { it.chatId == subscription.chatId }
 
         val expectedMessage = """
-            18, periods: 12-18
-            19, periods: 15-18
+            18 февраля: 12-18
+            19 февраля: 15-18
         """.trimIndent()
 
         assertThat(notification.status).isEqualTo(Notification.Status.NEW)
