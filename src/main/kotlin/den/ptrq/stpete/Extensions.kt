@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
  * @author petrique
  */
 
-fun ZonedDateTime.inBetween(startOfDay: LocalTime, endOfDay: LocalTime): Boolean =
+fun ZonedDateTime.inBetween(from: LocalTime, to: LocalTime): Boolean =
     this.toLocalTime().let {
-        it.isAfter(startOfDay) && it.isBefore(endOfDay)
+        it.isAfter(from) && it.isBefore(to) || it == from || it == to
     }
