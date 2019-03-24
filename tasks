@@ -9,3 +9,4 @@
 + Move to Heroku PostgresSQL (L)
 + User-friendly forecast message (S->M)
 + Daytime forecast filter (S)
++ Change period text from ranges to words (M)

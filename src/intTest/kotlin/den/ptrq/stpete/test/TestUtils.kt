@@ -28,7 +28,7 @@ class TestUtils {
 
     private val generator = Random
 
-    fun insertNewInteraction(): Interaction {
+    fun insertInteraction(): Interaction {
         val interaction = Interaction(
             id = interactionDao.generateInteractionId(),
             updateId = generator.nextLong(),
@@ -45,7 +45,7 @@ class TestUtils {
         return interaction
     }
 
-    fun insertNewSubscription(): Subscription {
+    fun insertSubscription(): Subscription {
         val subscription = Subscription(
             id = subscriptionDao.generateSubscriptionId(),
             userId = generator.nextLong(),
@@ -57,7 +57,7 @@ class TestUtils {
         return subscription
     }
 
-    fun insertNewForecast(epochTime: Long, clouds: Int): Forecast {
+    fun insertForecast(epochTime: Long, clouds: Int): Forecast {
         val forecast = Forecast(
             id = forecastDao.generateForecastId(),
             epochTime = epochTime,

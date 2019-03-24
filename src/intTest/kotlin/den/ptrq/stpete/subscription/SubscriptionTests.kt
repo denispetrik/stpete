@@ -39,7 +39,7 @@ class SubscriptionTests : IntTests() {
 
     @Test
     fun `should upload interaction and save it as subscription`() {
-        testUtils.insertNewInteraction()
+        testUtils.insertInteraction()
 
         val update = createUpdate()
 

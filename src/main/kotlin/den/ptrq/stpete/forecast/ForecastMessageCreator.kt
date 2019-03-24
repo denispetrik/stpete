@@ -1,6 +1,5 @@
 package den.ptrq.stpete.forecast
 
-import den.ptrq.stpete.monthName
 import java.time.LocalDate
 
 /**
@@ -17,32 +16,41 @@ class ForecastMessageCreator {
     }
 
     private fun sunnyDayText(date: LocalDate, hours: List<Int>): String {
-        val monthName = monthName(date)
+        val monthName = monthNames[date.monthValue]
 
         val periodsString = splitToPeriods(hours).asSequence()
-            .map { "${it.first}-${it.second}" }
+            .sorted()
+            .map { it.text }
             .joinToString(", ")
 
         return "${date.dayOfMonth} $monthName: $periodsString"
     }
 }
 
-fun splitToPeriods(hours: List<Int>): List<Pair<Int, Int>> {
-    if (hours.isEmpty()) {
-        return emptyList()
+enum class Period(private val range: IntRange, val text: String) {
+    MORNING(6..11, "утро"),
+    DAYTIME(12..17, "день"),
+    EVENING(18..22, "вечер");
+
+    companion object {
+        fun byHour(hour: Int): Period =
+            values().find { hour in it.range } ?: throw RuntimeException("unsupported hour")
     }
-    val periods = mutableListOf<Pair<Int, Int>>()
-    var begin = hours[0]
-    var end = hours[0]
-    hours.sorted().forEach { currentHour ->
-        if (currentHour - end > 3) {
-            periods += Pair(begin, end + 3)
-            begin = currentHour
-            end = currentHour
-        } else {
-            end = currentHour
-        }
-    }
-    periods += Pair(begin, end + 3)
-    return periods
 }
+
+fun splitToPeriods(hours: List<Int>): Set<Period> = hours.map { Period.byHour(it) }.toSet()
+
+private val monthNames = mapOf(
+    1 to "января",
+    2 to "февраля",
+    3 to "марта",
+    4 to "апреля",
+    5 to "мая",
+    6 to "июня",
+    7 to "июля",
+    8 to "августа",
+    9 to "сентября",
+    10 to "октября",
+    11 to "ноября",
+    12 to "декабря"
+)

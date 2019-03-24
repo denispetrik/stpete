@@ -37,27 +37,26 @@ class ForecastTests : IntTests() {
 
     @Test
     fun `should get fresh forecast and send notification`() {
-        val subscription = testUtils.insertNewSubscription()
+        val subscription = testUtils.insertSubscription()
 
         val cloudyForecastEpochTime = 1550480400L
-        val sunnyForecastEpochTime = 1550491200L
-        val newForecastEpochTime = 1550577600L
+        val sunnyForecastEpochTime = 1550556000L
+        val newForecastEpochTime = 1550588400L
 
-        testUtils.insertNewForecast(epochTime = cloudyForecastEpochTime, clouds = 80)
-        testUtils.insertNewForecast(epochTime = sunnyForecastEpochTime, clouds = 0)
+        testUtils.insertForecast(epochTime = cloudyForecastEpochTime, clouds = 80)
+        testUtils.insertForecast(epochTime = sunnyForecastEpochTime, clouds = 0)
 
-        val forecastItems = listOf(
-            ForecastItem(cloudyForecastEpochTime, Clouds(percentage = 0)),
-            ForecastItem(sunnyForecastEpochTime, Clouds(percentage = 0)),
-            ForecastItem(newForecastEpochTime, Clouds(percentage = 0))
+        `when`(forecastClient.getForecast()).thenReturn(
+            listOf(
+                ForecastItem(cloudyForecastEpochTime, Clouds(percentage = 0)),
+                ForecastItem(sunnyForecastEpochTime, Clouds(percentage = 0)),
+                ForecastItem(newForecastEpochTime, Clouds(percentage = 0))
+            )
         )
-
-        `when`(forecastClient.getForecast()).thenReturn(forecastItems)
 
         forecastChecker.checkForecast()
 
-        val forecasts = forecastDao.selectAll()
-        val forecastMap = forecasts.associateBy { it.epochTime }
+        val forecastMap = forecastDao.selectAll().associateBy { it.epochTime }
         val updatedForecast = forecastMap[cloudyForecastEpochTime]!!
         val notUpdatedForecast = forecastMap[sunnyForecastEpochTime]!!
         val newForecast = forecastMap[newForecastEpochTime]!!
@@ -69,8 +68,8 @@ class ForecastTests : IntTests() {
         val notification = notificationDao.selectAll().first { it.chatId == subscription.chatId }
 
         val expectedMessage = """
-            18 февраля: 12-18
-            19 февраля: 15-18
+            18 февраля: день
+            19 февраля: утро, вечер
         """.trimIndent()
 
         assertThat(notification.status).isEqualTo(Notification.Status.NEW)
